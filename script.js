@@ -1,127 +1,179 @@
 let csvData = [];
+let currentQuestionIndex = 0;
+let selectedMode = "synonym";
+let selectedCSVUrl = "";
 let questions = [];
-let currentIndex = 0;
-let answers = [];
-let selectedOption = null;
-let startTime;
+let userAnswers = [];
+let totalQuestions = 10;
 
-async function startTest() {
-  const csvFile = document.getElementById('csv-select').value;
-  const topic = document.getElementById('topic-select').value;
-  const count = parseInt(document.getElementById('question-count').value);
+async function loadCSVList() {
+  const response = await fetch("csvs/csv-list.json");
+  const list = await response.json();
+  const select = document.getElementById("csvSelector");
 
-  await loadCSV(csvFile);
-  generateQuestions(topic, count);
-  startTime = new Date();
-
-  document.getElementById('input-screen').classList.add('hidden');
-  document.getElementById('test-screen').classList.remove('hidden');
-  showQuestion();
-}
-
-async function loadCSV(filename) {
-  const response = await fetch(filename);
-  const text = await response.text();
-  csvData = text.trim().split('\n').slice(1).map(line => {
-    const [word, numId] = line.split(',');
-    return { word: word.trim(), numId: parseInt(numId.trim()) };
+  list.forEach((item) => {
+    const option = document.createElement("option");
+    option.value = item.url;
+    option.textContent = item.name;
+    select.appendChild(option);
   });
 }
 
-function generateQuestions(topic, count) {
-  const used = new Set();
-
-  while (questions.length < count) {
-    const entry = csvData[Math.floor(Math.random() * csvData.length)];
-    if (used.has(entry.word)) continue;
-    used.add(entry.word);
-
-    let qType = topic === 'mixed' ? (Math.random() < 0.5 ? 'synonyms' : 'antonyms') : topic;
-    const correctGroup = csvData.filter(e =>
-      qType === 'synonyms' ? e.numId === entry.numId && e.word !== entry.word :
-      e.numId === -entry.numId
-    );
-    if (correctGroup.length === 0) continue;
-
-    const correct = correctGroup[Math.floor(Math.random() * correctGroup.length)];
-    const distractors = csvData.filter(e => e.word !== entry.word && e.word !== correct.word);
-    shuffleArray(distractors);
-
-    const options = shuffleArray([correct.word, ...distractors.slice(0, 3).map(e => e.word)]);
-    questions.push({ word: entry.word, correct: correct.word, options, type: qType });
+document.getElementById("csvSelector").addEventListener("change", async (e) => {
+  selectedCSVUrl = e.target.value;
+  if (selectedCSVUrl) {
+    await loadCSV(selectedCSVUrl);
   }
+});
+
+document.getElementById("topicSelector").addEventListener("change", (e) => {
+  selectedMode = e.target.value;
+});
+
+async function loadCSV(url) {
+  const response = await fetch(url);
+  const text = await response.text();
+  const rows = text.trim().split("\n").slice(1); // skip header
+  csvData = rows.map((row) => {
+    const [word, id] = row.split(",");
+    return { word: word.trim(), id: parseInt(id.trim()) };
+  });
 }
 
-function showQuestion() {
-  const q = questions[currentIndex];
-  document.getElementById('question-number').innerText = `Question ${currentIndex + 1}`;
-  document.getElementById('question-text').innerText = `Choose the ${q.type.slice(0, -1)} of "${q.word}"`;
+function startTest() {
+  const num = parseInt(document.getElementById("questionCount").value);
+  if (isNaN(num) || num <= 0) {
+    alert("Enter a valid number of questions");
+    return;
+  }
+  totalQuestions = num;
+  questions = generateQuestions(num);
+  userAnswers = new Array(num).fill(null);
+  currentQuestionIndex = 0;
+  displayQuestion();
+}
 
-  const container = document.getElementById('options-container');
-  container.innerHTML = '';
-  document.getElementById('feedback').innerText = '';
-  document.getElementById('next-btn').disabled = true;
-  selectedOption = null;
+function generateQuestions(num) {
+  const qList = [];
+  const used = new Set();
 
-  q.options.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.innerText = opt;
-    btn.onclick = () => {
-      if (answers[currentIndex]) return;
-      document.querySelectorAll('#options-container button').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      selectedOption = opt;
-    };
-    container.appendChild(btn);
+  while (qList.length < num) {
+    const base = csvData[Math.floor(Math.random() * csvData.length)];
+    if (used.has(base.word)) continue;
+    used.add(base.word);
+
+    let isSyn = selectedMode === "synonym";
+    if (selectedMode === "mixed") isSyn = Math.random() < 0.5;
+
+    const correctId = isSyn ? base.id : -base.id;
+    const optionsPool = csvData.filter(w => w.id === correctId);
+    if (optionsPool.length === 0) continue;
+
+    const correctAnswer = optionsPool[Math.floor(Math.random() * optionsPool.length)];
+    let wrongOptions = csvData.filter(w => w.word !== correctAnswer.word && w.id !== correctId && w.id !== -correctId);
+    wrongOptions = shuffle(wrongOptions).slice(0, 3).map(w => w.word);
+
+    const allOptions = shuffle([correctAnswer.word, ...wrongOptions]);
+
+    qList.push({
+      questionWord: base.word,
+      correct: correctAnswer.word,
+      options: allOptions,
+      type: isSyn ? "Synonym" : "Antonym"
+    });
+  }
+
+  return qList;
+}
+
+function displayQuestion() {
+  const q = questions[currentQuestionIndex];
+  document.getElementById("questionBox").innerHTML = `
+    <div><strong>Q${currentQuestionIndex + 1} (${q.type}):</strong> What is a ${q.type.toLowerCase()} of <em>${q.questionWord}</em>?</div>
+    <div id="optionsBox">${q.options.map((opt, i) => `
+      <div class="option" onclick="selectOption(${i})" id="option${i}">${opt}</div>
+    `).join("")}</div>
+  `;
+  updateButtons();
+}
+
+let selectedOptionIndex = null;
+
+function selectOption(index) {
+  if (userAnswers[currentQuestionIndex] !== null) return; // Already saved
+  selectedOptionIndex = index;
+  document.querySelectorAll(".option").forEach((el, i) => {
+    el.classList.toggle("selected", i === index);
   });
 }
 
 function saveAnswer() {
-  if (!selectedOption || answers[currentIndex]) return;
+  if (selectedOptionIndex === null) {
+    alert("Please select an option before saving.");
+    return;
+  }
 
-  const q = questions[currentIndex];
-  const isCorrect = selectedOption === q.correct;
-  answers[currentIndex] = { selected: selectedOption, correct: q.correct, isCorrect };
+  const q = questions[currentQuestionIndex];
+  const selected = q.options[selectedOptionIndex];
+  userAnswers[currentQuestionIndex] = selected;
 
-  document.querySelectorAll('#options-container button').forEach(btn => {
-    if (btn.innerText === q.correct) btn.classList.add('correct');
-    else if (btn.innerText === selectedOption) btn.classList.add('wrong');
-    btn.disabled = true;
+  const isCorrect = selected === q.correct;
+  const message = isCorrect ? "Very Good! Your answer is correct!" : "Oops! That was wrong!";
+  document.getElementById("questionBox").insertAdjacentHTML("beforeend", `<div class="feedback">${message}</div>`);
+
+  document.querySelectorAll(".option").forEach(el => {
+    el.classList.add("disabled");
+    if (el.textContent === selected) {
+      el.classList.add(isCorrect ? "correct" : "wrong");
+    }
   });
 
-  document.getElementById('feedback').innerText = isCorrect
-    ? 'Very Good! Your answer is correct!'
-    : 'Oops! That was wrong!';
-  document.getElementById('next-btn').disabled = false;
-
-  // Auto-submit if all questions are answered
-  if (answers.filter(a => a).length === questions.length) submitTest();
+  selectedOptionIndex = null;
+  updateButtons();
+  checkAutoSubmit();
 }
 
 function nextQuestion() {
-  if (currentIndex < questions.length - 1) {
-    currentIndex++;
-    showQuestion();
+  if (currentQuestionIndex < totalQuestions - 1) {
+    currentQuestionIndex++;
+    displayQuestion();
   }
 }
 
-function submitTest() {
-  document.getElementById('test-screen').classList.add('hidden');
-  document.getElementById('result-screen').classList.remove('hidden');
-
-  const total = questions.length;
-  const correct = answers.filter(a => a?.isCorrect).length;
-  const wrong = answers.filter(a => a && !a.isCorrect).length;
-  const unattempted = total - answers.length;
-
-  const endTime = new Date();
-  const seconds = Math.floor((endTime - startTime) / 1000);
-  const timeTaken = `${Math.floor(seconds / 60)} min ${seconds % 60} sec`;
-
-  document.getElementById('result-summary').innerText =
-    `Correct: ${correct}\nWrong: ${wrong}\nUnattempted: ${unattempted}\nTime Taken: ${timeTaken}`;
+function updateButtons() {
+  document.getElementById("nextBtn").disabled = userAnswers[currentQuestionIndex] === null || currentQuestionIndex === totalQuestions - 1;
+  document.getElementById("saveBtn").disabled = userAnswers[currentQuestionIndex] !== null;
 }
 
-function shuffleArray(arr) {
+function submitTest() {
+  const correct = questions.filter((q, i) => userAnswers[i] === q.correct).length;
+  const wrong = userAnswers.filter((ans, i) => ans && ans !== questions[i].correct).length;
+  const unattempted = totalQuestions - userAnswers.filter(ans => ans !== null).length;
+
+  document.getElementById("resultBox").innerHTML = `
+    <h2>Test Complete</h2>
+    <p>Correct: ${correct}</p>
+    <p>Wrong: ${wrong}</p>
+    <p>Unattempted: ${unattempted}</p>
+  `;
+
+  document.getElementById("questionBox").innerHTML = "";
+  document.getElementById("controlBox").style.display = "none";
+}
+
+function checkAutoSubmit() {
+  if (userAnswers.every(ans => ans !== null)) {
+    submitTest();
+  }
+}
+
+function shuffle(arr) {
   return arr.sort(() => Math.random() - 0.5);
 }
+
+document.getElementById("startBtn").addEventListener("click", startTest);
+document.getElementById("saveBtn").addEventListener("click", saveAnswer);
+document.getElementById("nextBtn").addEventListener("click", nextQuestion);
+document.getElementById("submitBtn").addEventListener("click", submitTest);
+
+window.onload = loadCSVList;
