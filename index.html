@@ -8,25 +8,31 @@
 </head>
 <body>
   <div class="container" id="input-screen">
-    <h2>Synonym & Antonym MCQ Test</h2>
+    <h2>Synonym/Antonym MCQ Test</h2>
+    
+    <div class="form-section">
+      <label for="csv-select">Select CSV File:</label>
+      <select id="csv-select">
+        <option value="mock.csv">Mock CSV</option>
+      </select>
+    </div>
 
-    <label>Select CSV File:</label>
-    <select id="csvSelector">
-      <!-- Will be populated dynamically -->
-    </select>
+    <div class="form-section">
+      <label for="topic-select">Select Topic:</label>
+      <select id="topic-select">
+        <option value="synonyms">Synonyms</option>
+        <option value="antonyms">Antonyms</option>
+        <option value="mixed">Mixed</option>
+      </select>
+    </div>
 
-    <label>Select Topic:</label>
-    <select id="topicSelector">
-      <option value="synonym">Synonyms</option>
-      <option value="antonym">Antonyms</option>
-      <option value="mixed">Mixed</option>
-    </select>
-
-    <label>Number of Questions:</label>
-    <input type="number" id="questionCount" min="1" value="5" />
+    <div class="form-section">
+      <label for="question-count">Number of Questions:</label>
+      <input type="number" id="question-count" min="1" value="5" />
+    </div>
 
     <div class="button-row">
-      <button id="startBtn">Start Test</button>
+      <button id="start-btn" onclick="startTest()">Start Test</button>
     </div>
   </div>
 
@@ -37,11 +43,13 @@
       </div>
       <p id="question-text"></p>
       <div id="options-container"></div>
+
       <div class="button-row">
-        <button id="saveBtn">Save</button>
-        <button id="nextBtn" disabled>Next</button>
-        <button id="submitBtn">Submit</button>
+        <button id="save-btn" onclick="saveAnswer()">Save</button>
+        <button id="next-btn" onclick="nextQuestion()" disabled>Next</button>
+        <button id="submit-btn" onclick="submitTest()">Submit</button>
       </div>
+
       <p id="feedback"></p>
     </div>
   </div>
@@ -49,6 +57,7 @@
   <div class="container hidden" id="result-screen">
     <h2>Test Complete</h2>
     <p id="result-summary"></p>
+
     <div class="button-row">
       <button onclick="location.reload()">Restart</button>
     </div>
