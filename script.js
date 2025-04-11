@@ -6,39 +6,55 @@ let questions = [];
 let userAnswers = [];
 let totalQuestions = 10;
 
-async function loadCSVList() {
-  const response = await fetch("https://raw.githubusercontent.com/amzt-pixel/Vocabulary/main/csv-list.json");
-  const list = await response.json();
-  const select = document.getElementById("csvSelector");
-
-  list.forEach((item) => {
-    const option = document.createElement("option");
-    option.value = item.url;
-    option.textContent = item.name;
-    select.appendChild(option);
+window.onload = () => {
+  loadCSVList();
+  document.getElementById("csvSelector").addEventListener("change", async (e) => {
+    selectedCSVUrl = e.target.value;
+    if (selectedCSVUrl) await loadCSV(selectedCSVUrl);
   });
-}
 
-document.getElementById("csvSelector").addEventListener("change", async (e) => {
-  selectedCSVUrl = e.target.value;
-  if (selectedCSVUrl) {
-    await loadCSV(selectedCSVUrl);
+  document.getElementById("topicSelector").addEventListener("change", (e) => {
+    selectedMode = e.target.value;
+  });
+
+  document.getElementById("startBtn").addEventListener("click", startTest);
+  document.getElementById("saveBtn").addEventListener("click", saveAnswer);
+  document.getElementById("nextBtn").addEventListener("click", nextQuestion);
+  document.getElementById("submitBtn").addEventListener("click", submitTest);
+};
+
+async function loadCSVList() {
+  try {
+    const response = await fetch("https://raw.githubusercontent.com/amzt-pixel/Vocabulary/main/csv-list.json");
+    const list = await response.json();
+    const select = document.getElementById("csvSelector");
+
+    list.forEach((item) => {
+      const option = document.createElement("option");
+      option.value = item.url;
+      option.textContent = item.name;
+      select.appendChild(option);
+    });
+
+    // Load the first CSV by default
+    if (list.length > 0) {
+      selectedCSVUrl = list[0].url;
+      await loadCSV(selectedCSVUrl);
+    }
+  } catch (e) {
+    alert("Failed to load CSV list.");
+    console.error(e);
   }
-});
-
-document.getElementById("topicSelector").addEventListener("change", (e) => {
-  selectedMode = e.target.value;
-});
+}
 
 async function loadCSV(url) {
   const response = await fetch(url);
   const text = await response.text();
-  const rows = text.trim().split("\n").slice(1); // skip header
+  const rows = text.trim().split("\n").slice(1);
   csvData = rows.map((row) => {
     const [word, id] = row.split(",");
     return { word: word.trim(), id: parseInt(id.trim()) };
   });
-  console.log("CSV Data Loaded: ", csvData);  // Debugging log
 }
 
 function startTest() {
@@ -51,6 +67,9 @@ function startTest() {
   questions = generateQuestions(num);
   userAnswers = new Array(num).fill(null);
   currentQuestionIndex = 0;
+
+  document.getElementById("input-screen").classList.add("hidden");
+  document.getElementById("test-screen").classList.remove("hidden");
   displayQuestion();
 }
 
@@ -89,19 +108,22 @@ function generateQuestions(num) {
 
 function displayQuestion() {
   const q = questions[currentQuestionIndex];
-  document.getElementById("questionBox").innerHTML = `
-    <div><strong>Q${currentQuestionIndex + 1} (${q.type}):</strong> What is a ${q.type.toLowerCase()} of <em>${q.questionWord}</em>?</div>
-    <div id="optionsBox">${q.options.map((opt, i) => `
-      <div class="option" onclick="selectOption(${i})" id="option${i}">${opt}</div>
-    `).join("")}</div>
-  `;
+  document.getElementById("question-number").textContent = `Q${currentQuestionIndex + 1} (${q.type})`;
+  document.getElementById("question-text").textContent = `What is a ${q.type.toLowerCase()} of "${q.questionWord}"?`;
+
+  const optionsHTML = q.options.map((opt, i) =>
+    `<div class="option" onclick="selectOption(${i})" id="option${i}">${opt}</div>`
+  ).join("");
+  document.getElementById("options-container").innerHTML = optionsHTML;
+
+  document.getElementById("feedback").textContent = "";
   updateButtons();
 }
 
 let selectedOptionIndex = null;
 
 function selectOption(index) {
-  if (userAnswers[currentQuestionIndex] !== null) return; // Already saved
+  if (userAnswers[currentQuestionIndex] !== null) return;
   selectedOptionIndex = index;
   document.querySelectorAll(".option").forEach((el, i) => {
     el.classList.toggle("selected", i === index);
@@ -120,7 +142,7 @@ function saveAnswer() {
 
   const isCorrect = selected === q.correct;
   const message = isCorrect ? "Very Good! Your answer is correct!" : "Oops! That was wrong!";
-  document.getElementById("questionBox").insertAdjacentHTML("beforeend", `<div class="feedback">${message}</div>`);
+  document.getElementById("feedback").textContent = message;
 
   document.querySelectorAll(".option").forEach(el => {
     el.classList.add("disabled");
@@ -141,25 +163,19 @@ function nextQuestion() {
   }
 }
 
-function updateButtons() {
-  document.getElementById("nextBtn").disabled = userAnswers[currentQuestionIndex] === null || currentQuestionIndex === totalQuestions - 1;
-  document.getElementById("saveBtn").disabled = userAnswers[currentQuestionIndex] !== null;
-}
-
 function submitTest() {
   const correct = questions.filter((q, i) => userAnswers[i] === q.correct).length;
   const wrong = userAnswers.filter((ans, i) => ans && ans !== questions[i].correct).length;
   const unattempted = totalQuestions - userAnswers.filter(ans => ans !== null).length;
 
-  document.getElementById("resultBox").innerHTML = `
-    <h2>Test Complete</h2>
-    <p>Correct: ${correct}</p>
-    <p>Wrong: ${wrong}</p>
-    <p>Unattempted: ${unattempted}</p>
-  `;
+  document.getElementById("test-screen").classList.add("hidden");
+  document.getElementById("result-screen").classList.remove("hidden");
 
-  document.getElementById("questionBox").innerHTML = "";
-  document.getElementById("controlBox").style.display = "none";
+  document.getElementById("result-summary").innerHTML = `
+    Correct: ${correct}<br>
+    Wrong: ${wrong}<br>
+    Unattempted: ${unattempted}
+  `;
 }
 
 function checkAutoSubmit() {
@@ -168,13 +184,11 @@ function checkAutoSubmit() {
   }
 }
 
-function shuffle(arr) {
-  return arr.sort(() => Math.random() - 0.5);
+function updateButtons() {
+  document.getElementById("nextBtn").disabled = userAnswers[currentQuestionIndex] === null || currentQuestionIndex === totalQuestions - 1;
+  document.getElementById("saveBtn").disabled = userAnswers[currentQuestionIndex] !== null;
 }
 
-document.getElementById("startBtn").addEventListener("click", startTest);
-document.getElementById("saveBtn").addEventListener("click", saveAnswer);
-document.getElementById("nextBtn").addEventListener("click", nextQuestion);
-document.getElementById("submitBtn").addEventListener("click", submitTest);
-
-window.onload = loadCSVList;
+function shuffle(arr) {
+  return arr.sort(() => Math.random() - 0.5);
+                                                          }
