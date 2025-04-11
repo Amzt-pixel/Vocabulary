@@ -38,6 +38,7 @@ async function loadCSV(url) {
     const [word, id] = row.split(",");
     return { word: word.trim(), id: parseInt(id.trim()) };
   });
+  console.log("CSV Data Loaded: ", csvData);  // Debugging log
 }
 
 function startTest() {
