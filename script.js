@@ -7,7 +7,7 @@ let userAnswers = [];
 let totalQuestions = 10;
 
 async function loadCSVList() {
-  const response = await fetch("csvs/csv-list.json");
+  const response = await fetch("https://raw.githubusercontent.com/amzt-pixel/Vocabulary/main/csv-list.json");
   const list = await response.json();
   const select = document.getElementById("csvSelector");
 
