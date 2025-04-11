@@ -1,58 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Synonym-Antonym MCQ Test</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCQ Test</title>
 </head>
 <body>
-  <div class="container" id="input-screen">
-    <h2>Synonym/Antonym MCQ Test</h2>
-    <label>Select CSV File:</label>
-    <select id="csv-select">
-      <option value="mock.csv">Mock CSV</option>
-    </select>
 
-    <label>Select Topic:</label>
-    <select id="topic-select">
-      <option value="synonyms">Synonyms</option>
-      <option value="antonyms">Antonyms</option>
-      <option value="mixed">Mixed</option>
-    </select>
+  <h1>Choose your CSV Set</h1>
+  <select id="csvDropdown">
+    <option value="">Select CSV</option>
+  </select>
+  <button id="startTestBtn" disabled>Start Test</button>
 
-    <label>Number of Questions:</label>
-    <input type="number" id="question-count" min="1" value="5" />
+  <script>
+    // Fetch and load the CSV list from the JSON file
+    fetch("https://raw.githubusercontent.com/amzt-pixel/Vocabulary/main/csv-list.json")
+      .then(response => response.json())
+      .then(data => {
+        console.log("CSV List Loaded: ", data);  // This will log the loaded data in the console
+        populateCSVDropdown(data);
+      })
+      .catch(error => {
+        console.error("Error loading csv-list.json:", error);
+      });
 
-    <div class="button-row">
-      <button onclick="startTest()">Start Test</button>
-    </div>
-  </div>
+    // Populate the dropdown with available CSV sets
+    function populateCSVDropdown(data) {
+      const dropdown = document.getElementById("csvDropdown");
+      dropdown.innerHTML = "<option value=''>Select CSV</option>";  // Default "Select CSV" option
 
-  <div class="container hidden" id="test-screen">
-    <div class="question-box">
-      <div class="question-header">
-        <span id="question-number"></span>
-      </div>
-      <p id="question-text"></p>
-      <div id="options-container"></div>
-      <div class="button-row">
-        <button id="save-btn" onclick="saveAnswer()">Save</button>
-        <button id="next-btn" onclick="nextQuestion()" disabled>Next</button>
-        <button onclick="submitTest()">Submit</button>
-      </div>
-      <p id="feedback"></p>
-    </div>
-  </div>
+      // Loop through and create options for the dropdown
+      data.forEach(csv => {
+        const option = document.createElement("option");
+        option.value = csv.url;
+        option.textContent = csv.name;
+        dropdown.appendChild(option);
+      });
+    }
 
-  <div class="container hidden" id="result-screen">
-    <h2>Test Complete</h2>
-    <p id="result-summary"></p>
-    <div class="button-row">
-      <button onclick="location.reload()">Restart</button>
-    </div>
-  </div>
+    // Handle CSV selection
+    document.getElementById("csvDropdown").addEventListener("change", function(event) {
+      const selectedCSVUrl = event.target.value;
+      
+      if (selectedCSVUrl) {
+        // Enable the start test button when CSV is selected
+        document.getElementById("startTestBtn").disabled = false;
+        
+        // Fetch and load the selected CSV data
+        fetch(selectedCSVUrl)
+          .then(response => response.text())
+          .then(csvData => {
+            console.log("CSV Loaded: ", csvData);
+            processCSVData(csvData);  // Process the CSV data for your test (implement this function)
+          })
+          .catch(error => {
+            console.error("Error loading CSV:", error);
+          });
+      }
+    });
 
-  <script src="script.js"></script>
+    // Example function to process CSV data (you can implement this to create questions)
+    function processCSVData(csvData) {
+      // Convert CSV to questions or process it as needed
+      // For now, let's just log the CSV data
+      console.log("Processing CSV Data: ", csvData);
+    }
+  </script>
+
 </body>
 </html>
