@@ -1,0 +1,31 @@
+name: Update csv-list.json
+
+on:
+  push:
+    paths:
+      - 'csvs/*.csv'
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Generate csv-list.json
+        run: |
+          echo "[" > csv-list.json
+          for f in csvs/*.csv; do
+            name=$(basename "$f" .csv)
+            echo "  {\"name\": \"${name}\", \"url\": \"csvs/${name}.csv\"}," >> csv-list.json
+          done
+          sed -i '$ s/,$//' csv-list.json  # remove trailing comma
+          echo "]" >> csv-list.json
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add csv-list.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update csv-list.json"
+          git push
