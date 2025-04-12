@@ -4,6 +4,8 @@ let selectedMode = "synonym";
 let selectedCSVUrl = "";
 let questions = [];
 let userAnswers = [];
+let clockInterval;
+let startTime;
 let totalQuestions = 10;
 
 window.onload = () => {
@@ -73,6 +75,14 @@ function startTest() {
   document.getElementById("input-screen").classList.add("hidden");
   document.getElementById("test-screen").classList.remove("hidden");
   displayQuestion();
+}
+function startClock() {
+  clockInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+    const seconds = (elapsed % 60).toString().padStart(2, '0');
+    document.getElementById("clock").textContent = `${minutes}:${seconds}`;
+  }, 1000);
 }
 
 function generateQuestions(num) {
@@ -177,11 +187,17 @@ function submitTest() {
   document.getElementById("test-screen").classList.add("hidden");
   document.getElementById("result-screen").classList.remove("hidden");
 
-  document.getElementById("result-summary").innerHTML = `
-    Correct: ${correct}<br>
-    Wrong: ${wrong}<br>
-    Unattempted: ${unattempted}
-  `;
+  clearInterval(clockInterval);
+const elapsed = Math.floor((Date.now() - startTime) / 1000);
+const minutes = Math.floor(elapsed / 60);
+const seconds = elapsed % 60;
+
+document.getElementById("result-summary").innerHTML = `
+  Correct: ${correct}<br>
+  Wrong: ${wrong}<br>
+  Unattempted: ${unattempted}<br>
+  Time Taken: ${minutes} min ${seconds} sec
+`;
 }
 
 function checkAutoSubmit() {
