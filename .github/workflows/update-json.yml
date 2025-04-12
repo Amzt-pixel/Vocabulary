@@ -12,14 +12,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Generate csv-list.json
+      - name: Generate csv-list.json in root
         run: |
           echo "[" > csv-list.json
           for f in csvs/*.csv; do
             name=$(basename "$f" .csv)
             echo "  {\"name\": \"${name}\", \"url\": \"csvs/${name}.csv\"}," >> csv-list.json
           done
-          sed -i '$ s/,$//' csv-list.json  # remove trailing comma
+          sed -i '$ s/,$//' csv-list.json
           echo "]" >> csv-list.json
 
       - name: Commit and push changes
