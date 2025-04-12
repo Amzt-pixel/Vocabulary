@@ -14,7 +14,15 @@ body {
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-
+.test-container {
+    background: white;
+    width: 60%; /* Reduced width for all devices */
+    max-width: 600px; /* Ensures it doesn't get too large on bigger screens */
+    margin: 50px auto;
+    padding: 30px; /* Slightly reduced padding */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+}
 h2 {
   text-align: center;
   color: #333;
