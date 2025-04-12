@@ -71,6 +71,8 @@ function startTest() {
   questions = generateQuestions(num);
   userAnswers = new Array(num).fill(null);
   currentQuestionIndex = 0;
+  startTime = Date.now(); // This records the exact time test starts
+startClock(); // Starts the visible running clock
 
   document.getElementById("input-screen").classList.add("hidden");
   document.getElementById("test-screen").classList.remove("hidden");
