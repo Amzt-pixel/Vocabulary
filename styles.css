@@ -23,6 +23,48 @@ body {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     border-radius: 12px;
 }
+.question-box {
+    position: relative;
+    border: 2px solid #004d99;
+    padding: 15px; /* Reduced padding */
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.question-text {
+    border: 2px solid #004d99;  
+    /*margin: 15px auto;*/
+    border-radius: 8px;
+    /*width: 85%; /* Slightly narrower */
+    text-align: center;
+    background-color: #ffffff;
+    display: block;
+    width: calc(100% - 30px); /* Adjust width to fit within the question box */
+    max-width: 100%; /* Prevent overflow */
+    box-sizing: border-box; /* Include padding and border in width calculation */
+    overflow-wrap: break-word;
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 24px; /* Slightly reduced */
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.question-header #questionNumber {
+    color: black; /* Keep question number black */
+}
+
+.question-header #runningClock {
+    color: #e74c3c; /* Change timer color to red */
+    font-weight: bold;
+}
+.buttons-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
 h2 {
   text-align: center;
   color: #333;
