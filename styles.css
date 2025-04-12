@@ -136,12 +136,6 @@ button:disabled {
   margin-top: 20px;
 }
 
-.question-header {
-  font-size: 18px;
-  color: #555;
-  margin-bottom: 10px;
-}
-
 #options-container button {
   display: block;
   width: 100%;
