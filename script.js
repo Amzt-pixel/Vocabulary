@@ -164,7 +164,7 @@ function displayQuestion() {
   document.getElementById("question-text").textContent = `What is a ${q.type.toLowerCase()} of "${q.questionWord}"?`;
 
   const optionsHTML = q.options.map((opt, i) =>
-    `<div class="option" onclick="selectOption(${i})" id="option${i}">${opt}</div>`
+    `<button class="option" onclick="selectOption(${i})" id="option${i}">${opt}</button>`
   ).join("");
   document.getElementById("options-container").innerHTML = optionsHTML;
 
