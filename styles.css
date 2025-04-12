@@ -90,7 +90,7 @@ button:disabled {
 }
 
 /* Test Screen */
-#test-screen .question-box {
+#test-screen .question-container {
   margin-top: 20px;
 }
 
