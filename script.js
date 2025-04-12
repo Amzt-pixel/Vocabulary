@@ -67,8 +67,17 @@ function startTest() {
     alert("Please select all fields before starting the test.");
     return;
   }
+  // Disable start button
+  const startBtn = document.getElementById("startBtn");
+  startBtn.disabled = true;
+  
   totalQuestions = num;
   questions = generateQuestions(num);
+  // If generation failed and redirected, questions will be empty
+  if (questions.length === 0) {
+    startBtn.disabled = false; // Re-enable if failed
+    return;
+  }
   userAnswers = new Array(num).fill(null);
   currentQuestionIndex = 0;
   startTime = Date.now(); // This records the exact time test starts
@@ -78,6 +87,11 @@ startClock(); // Starts the visible running clock
   document.getElementById("test-screen").classList.remove("hidden");
   displayQuestion();
 }
+// Re-enable start button only after test starts
+  setTimeout(() => {
+    startBtn.disabled = false;
+  }, 500);
+
 function startClock() {
   const clockElement = document.getElementById("question-clock");
   if (!clockElement) return;
@@ -93,8 +107,12 @@ function startClock() {
 function generateQuestions(num) {
   const qList = [];
   const used = new Set();
+  let attempts = 0;
+  const maxAttempts = num * 10; // Try 10x the number of questions
 
-  while (qList.length < num) {
+  while (qList.length < num && attempts < maxAttempts) {
+    attempts++;
+
     const base = csvData[Math.floor(Math.random() * csvData.length)];
     if (used.has(base.word)) continue;
     used.add(base.word);
@@ -107,11 +125,17 @@ function generateQuestions(num) {
     if (optionsPool.length === 0) continue;
 
     const filteredOptionsPool = optionsPool.filter(opt => opt.word.toLowerCase() !== base.word.toLowerCase());
-if (filteredOptionsPool.length === 0) continue;
-const correctAnswer = filteredOptionsPool[Math.floor(Math.random() * filteredOptionsPool.length)];
+    if (filteredOptionsPool.length === 0) continue;
 
-    let wrongOptions = csvData.filter(w => w.word !== correctAnswer.word && w.id !== correctId && w.id !== -correctId);
+    const correctAnswer = filteredOptionsPool[Math.floor(Math.random() * filteredOptionsPool.length)];
+    let wrongOptions = csvData.filter(w =>
+      w.word !== correctAnswer.word &&
+      w.id !== correctId &&
+      w.id !== -correctId
+    );
     wrongOptions = shuffle(wrongOptions).slice(0, 3).map(w => w.word);
+
+    if (wrongOptions.length < 3) continue;
 
     const allOptions = shuffle([correctAnswer.word, ...wrongOptions]);
 
@@ -121,6 +145,13 @@ const correctAnswer = filteredOptionsPool[Math.floor(Math.random() * filteredOpt
       options: allOptions,
       type: isSyn ? "Synonym" : "Antonym"
     });
+  }
+
+  // If not enough questions were created, show message and redirect
+  if (qList.length < num) {
+    alert("Failed to generate questions");
+    window.location.href = "index.html";
+    return [];
   }
 
   return qList;
