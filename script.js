@@ -59,8 +59,10 @@ async function loadCSV(url) {
 
 function startTest() {
   const num = parseInt(document.getElementById("questionCount").value);
-  if (isNaN(num) || num <= 0) {
-    alert("Enter a valid number of questions");
+  const csv = document.getElementById("csvSelector").value;
+  const topic = document.getElementById("topicSelector").value;
+  if (!csv || !topic || isNaN(num) || num <= 0) {
+    alert("Please select all fields before starting the test.");
     return;
   }
   totalQuestions = num;
