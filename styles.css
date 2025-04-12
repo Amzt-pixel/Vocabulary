@@ -58,7 +58,7 @@ body {
     color: black; /* Keep question number black */
 }
 
-.question-header #runningClock {
+.question-header #questionClock {
     color: #e74c3c; /* Change timer color to red */
     font-weight: bold;
 }
