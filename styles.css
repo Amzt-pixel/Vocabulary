@@ -138,19 +138,21 @@ button:disabled {
 
 #options-container button {
   display: block;
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  background: #f9f9f9;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.3s, border-color 0.3s;
+    width: 85%; /* Reduced from 90% */
+    text-align: left;
+    padding: 16px; /* Slightly reduced */
+    margin: 15px auto;
+    background: #ffffff;
+    border: 2px solid #004d99;
+    font-size: 24px; /* Reduced from 26px */
+    color: #000000;
+    border-radius: 8px;
 }
 
 #options-container button.selected {
-  border: 2px solid #007bff;
+  font-weight: bold;
+  background-color: #004d99 !important;
+  color: #ffffff !important;
 }
 
 #options-container button.correct {
