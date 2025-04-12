@@ -89,7 +89,10 @@ function generateQuestions(num) {
     const optionsPool = csvData.filter(w => w.id === correctId);
     if (optionsPool.length === 0) continue;
 
-    const correctAnswer = optionsPool[Math.floor(Math.random() * optionsPool.length)];
+    const filteredOptionsPool = optionsPool.filter(opt => opt.word.toLowerCase() !== base.word.toLowerCase());
+if (filteredOptionsPool.length === 0) continue;
+const correctAnswer = filteredOptionsPool[Math.floor(Math.random() * filteredOptionsPool.length)];
+
     let wrongOptions = csvData.filter(w => w.word !== correctAnswer.word && w.id !== correctId && w.id !== -correctId);
     wrongOptions = shuffle(wrongOptions).slice(0, 3).map(w => w.word);
 
