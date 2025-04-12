@@ -113,8 +113,7 @@ const correctAnswer = filteredOptionsPool[Math.floor(Math.random() * filteredOpt
 
 function displayQuestion() {
   const q = questions[currentQuestionIndex];
-  document.getElementById("question-number").textContent = `Question ${currentQuestionIndex + 1} of ${totalQuestions}`;
-  //document.getElementById("question-number").textContent = `Q${currentQuestionIndex + 1} (${q.type})`;
+  document.getElementById("question-number").textContent = `Q${currentQuestionIndex + 1} (${q.type})`;
   document.getElementById("question-text").textContent = `What is a ${q.type.toLowerCase()} of "${q.questionWord}"?`;
 
   const optionsHTML = q.options.map((opt, i) =>
