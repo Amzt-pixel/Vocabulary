@@ -79,11 +79,14 @@ startClock(); // Starts the visible running clock
   displayQuestion();
 }
 function startClock() {
+  const clockElement = document.getElementById("question-clock");
+  if (!clockElement) return;
+
   clockInterval = setInterval(() => {
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
-    const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
-    const seconds = (elapsed % 60).toString().padStart(2, '0');
-    document.getElementById("clock").textContent = `${minutes}:${seconds}`;
+    const minutes = Math.floor(elapsed / 60);
+    const seconds = elapsed % 60;
+    clockElement.textContent = `Time: ${minutes}m ${seconds}s`;
   }, 1000);
 }
 
