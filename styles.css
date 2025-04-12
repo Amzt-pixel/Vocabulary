@@ -134,6 +134,7 @@ button:disabled {
 /* Test Screen */
 #test-screen .question-container {
   margin-top: 20px;
+  background: #f28f35;
 }
 
 #options-container button {
