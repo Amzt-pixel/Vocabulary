@@ -193,8 +193,15 @@ function saveAnswer() {
   userAnswers[currentQuestionIndex] = selected;
 
   const isCorrect = selected === q.correct;
-  const message = isCorrect ? "Very Good! Your answer is correct!" : "Oops! That was wrong!";
-  document.getElementById("feedback").textContent = message;
+  /*const message = isCorrect ? "Very Good! Your answer is correct!" : "Oops! That was wrong!";
+  document.getElementById("feedback").textContent = message;*/
+  let message;
+if (isCorrect) {
+  message = "Very Good! Your answer is correct!";
+} else {
+  message = `Oops! That was wrong! The correct answer was: "${q.correct}"`;
+}
+document.getElementById("feedback").textContent = message;
 
   document.querySelectorAll(".option").forEach(el => {
     el.classList.add("disabled");
