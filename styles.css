@@ -16,7 +16,7 @@ body {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     border-radius: 12px; */
     width: 70%;  /* Default width, will be narrower on mobile */
-    max-width: 400px;
+    max-width: 600px;
     margin: 10% auto;
     padding: 30px;
     background: white;
