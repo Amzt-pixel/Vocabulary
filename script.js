@@ -242,10 +242,10 @@ const seconds = elapsed % 60;
   Time Taken: ${minutes} min ${seconds} sec
 `;*/
   document.getElementById("result-summary").innerHTML = `
-  <div class="feedback-row correct">Correct: ${correct}</div>
-  <div class="feedback-row wrong">Wrong: ${wrong}</div>
-  <div class="feedback-row unattempted">Unattempted: ${unattempted}</div>
-  <div class="feedback-row time">Time Taken: ${minutes} min ${seconds} sec</div>
+  <p class="feedback-row correct">Correct: ${correct}</p>
+  <p class="feedback-row wrong">Wrong: ${wrong}</p>
+  <p class="feedback-row unattempted">Unattempted: ${unattempted}</p>
+  <p class="feedback-row time">Time Taken: ${minutes} min ${seconds} sec</p>
 `;
 }
 
