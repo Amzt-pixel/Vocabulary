@@ -205,10 +205,23 @@ button:disabled {
 }
 */
 /* Feedback */
-#feedback {
+
+.feedback {
   margin-top: 15px;
   font-weight: bold;
   text-align: center;
+}
+
+.feedback.correct {
+  color: darkgreen;
+  background-color: #e6ffe6;
+  border-color: green;
+}
+
+.feedback.wrong {
+  color: darkred;
+  background-color: #ffe6e6;
+  border-color: red;
 }
 
 #result-screen {
@@ -219,24 +232,24 @@ button:disabled {
   font-size: 18px;
   color: #555;
 }*/
-.feedback-row {
+.result-row {
   font-size: 28px; /* Slightly reduced */
     margin-top: 10px;
 }
 
-.feedback-row.correct {
+.result-row.correct {
   color: #004d99;
 }
 
-.feedback-row.wrong {
+.result-row.wrong {
   color: red;
 }
 
-.feedback-row.unattempted {
+.result-row.unattempted {
   color: #333;
 }
 
-.feedback-row.time {
+.result-row.time {
   color: #138d75;
 }
 
