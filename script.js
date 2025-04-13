@@ -235,11 +235,17 @@ const elapsed = Math.floor((Date.now() - startTime) / 1000);
 const minutes = Math.floor(elapsed / 60);
 const seconds = elapsed % 60;
 
-document.getElementById("result-summary").innerHTML = `
+/*document.getElementById("result-summary").innerHTML = `
   Correct: ${correct}<br>
   Wrong: ${wrong}<br>
   Unattempted: ${unattempted}<br>
   Time Taken: ${minutes} min ${seconds} sec
+`;*/
+  document.getElementById("result-summary").innerHTML = `
+  <div class="feedback-row correct">Correct: ${correct}</div>
+  <div class="feedback-row wrong">Wrong: ${wrong}</div>
+  <div class="feedback-row unattempted">Unattempted: ${unattempted}</div>
+  <div class="feedback-row time">Time Taken: ${minutes} min ${seconds} sec</div>
 `;
 }
 
