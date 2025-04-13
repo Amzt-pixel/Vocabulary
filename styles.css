@@ -43,7 +43,7 @@ body {
 
 .question-textbox {
     border: 2px solid #004d99;  
-    /*margin: 15px auto;*/
+    margin: 15px auto;*/
     border-radius: 8px;
     width: 85%; /* Slightly narrower */
     text-align: center;
