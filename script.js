@@ -197,11 +197,15 @@ function saveAnswer() {
   document.getElementById("feedback").textContent = message;*/
   let message;
 if (isCorrect) {
-  message = "Very Good! Your answer is correct!";
+  message = "Your answer is correct!";
 } else {
-  message = `Oops! That was wrong! The correct answer was: "${q.correct}"`;
+  message = `Wrong! The correct answer is: "${q.correct}"`;
 }
-document.getElementById("feedback").textContent = message;
+/*document.getElementById("feedback").textContent = message;*/
+  const feedbackEl = document.getElementById("feedback");
+feedbackEl.textContent = message;
+feedbackEl.className = "feedback"; // Reset and apply base class
+feedbackEl.classList.add(isCorrect ? "correct" : "wrong");
 
   document.querySelectorAll(".option").forEach(el => {
     el.classList.add("disabled");
@@ -242,10 +246,10 @@ const seconds = elapsed % 60;
   Time Taken: ${minutes} min ${seconds} sec
 `;*/
   document.getElementById("result-summary").innerHTML = `
-  <p class="feedback-row correct">Correct: ${correct}</p>
-  <p class="feedback-row wrong">Wrong: ${wrong}</p>
-  <p class="feedback-row unattempted">Unattempted: ${unattempted}</p>
-  <p class="feedback-row time">Time Taken: ${minutes} min ${seconds} sec</p>
+  <p class="result-row correct">Correct: ${correct}</p>
+  <p class="result-row wrong">Wrong: ${wrong}</p>
+  <p class="result-row unattempted">Unattempted: ${unattempted}</p>
+  <p class="result-row time">Time Taken: ${minutes} min ${seconds} sec</p>
 `;
 }
 
