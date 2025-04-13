@@ -215,9 +215,29 @@ button:disabled {
   text-align: center;
 }
 
-#result-screen p {
+/*#result-screen p {
   font-size: 18px;
   color: #555;
+}*/
+.feedback-row {
+  font-size: 28px; /* Slightly reduced */
+    margin-top: 10px;
+}
+
+.feedback-row.correct {
+  color: #004d99;
+}
+
+.feedback-row.wrong {
+  color: red;
+}
+
+.feedback-row.unattempted {
+  color: #333;
+}
+
+.feedback-row.time {
+  color: #138d75;
 }
 
 /* Hidden Class */
