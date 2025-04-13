@@ -7,13 +7,20 @@ body {
 }
 
 .container {
-    background: white;
-    width: 60%; /* Reduced width for all devices */
-    max-width: 600px; /* Ensures it doesn't get too large on bigger screens */
+   /* background: white;
+    width: 60%; 
+    max-width: 600px; 
     margin: 50px auto;
-    padding: 30px; /* Slightly reduced padding */
+    padding: 30px; 
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    border-radius: 12px; */
+    width: 70%;  /* Default width, will be narrower on mobile */
+    max-width: 400px;
+    margin: 10% auto;
+    padding: 30px;
+    background: white;
     border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .test-container {
