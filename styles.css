@@ -35,14 +35,14 @@ body {
 }
 .question-box {
     position: relative;
-    border: 2px solid #004d99;
+    border: 2px solid #006666;
     padding: 15px; /* Reduced padding */
     margin-bottom: 20px;
     border-radius: 10px;
 }
 
 .question-textbox {
-    border: 2px solid #004d99;  /*2px*/
+    border: 2px solid #006666;  /*2px*/
     margin: 15px auto;
     border-radius: 8px;/*8px*/
     width: 85%; /* Slightly narrower */
@@ -140,11 +140,11 @@ button {
     
 }
 
-.start-btn { background-color: #004d99; color: white; width: 50%; }
-.save-btn { background-color: #004d99; color: white; width: 30%;}
-.next-btn { background-color: #004d99; color: white; width: 30%;}
-.submit-btn { background-color: #004d99; color: white; width: 30%; }
-.restart-btn { background-color: #004d99; color: white; width: 50%;}
+.start-btn { background-color: #006666; color: white; width: 50%; }
+.save-btn { background-color: #006666; color: white; width: 30%;}
+.next-btn { background-color: #006666; color: white; width: 30%;}
+.submit-btn { background-color: #006666; color: white; width: 30%; }
+.restart-btn { background-color: #006666; color: white; width: 50%;}
 .home-btn { background-color: #333; color: white; }
 
 /*button {
@@ -182,7 +182,7 @@ button:disabled {
     padding: 16px; /* Slightly reduced */
     margin: 15px auto;
     background: #ffffff;
-    border: 2px solid #004d99;
+    border: 2px solid #006666;
     font-size: 24px; /* Reduced from 26px */
     color: #000000;
     border-radius: 8px;
@@ -190,7 +190,7 @@ button:disabled {
 
 #options-container button.selected {
   font-weight: bold;
-  background-color: #004d99 !important;
+  background-color: #006666 !important;
   color: #ffffff !important;
 }
 /*
@@ -235,7 +235,7 @@ button:disabled {
 }
 
 .result-row.correct {
-  color: #004d99;
+  color: #006666;
 }
 
 .result-row.wrong {
