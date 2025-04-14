@@ -131,7 +131,8 @@ input[type="number"]::-webkit-inner-spin-button {
 */
 
 button {
-    padding: 15px 35px; /* Reduced padding */
+    padding: 15px 25px; /* Reduced padding */
+    width: 25%;
     margin: 12px;
     cursor: pointer;
     border: none;
