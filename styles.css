@@ -58,7 +58,7 @@ body {
 .question-header {
     display: flex;
     justify-content: space-between;
-    font-size: 16px; /* Slightly reduced */
+    font-size: 24px; /* Slightly reduced */
     font-weight: bold;
     margin-bottom: 10px;
 }
@@ -209,18 +209,15 @@ button:disabled {
   margin-top: 15px;
   font-weight: bold;
   text-align: center;
+  font-size: 24px;
 }
 
 .feedback.correct {
   color: darkgreen;
-  background-color: #e6ffe6;
-  border-color: green;
 }
 
 .feedback.wrong {
   color: darkred;
-  background-color: #ffe6e6;
-  border-color: red;
 }
 
 #result-screen {
