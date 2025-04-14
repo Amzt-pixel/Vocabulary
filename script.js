@@ -159,7 +159,7 @@ function generateQuestions(num) {
 
 function displayQuestion() {
   const q = questions[currentQuestionIndex];
-  document.getElementById("question-number").textContent = `Question ${currentQuestionIndex + 1} of ${totalQuestions}`;
+  document.getElementById("question-number").textContent = `Question No. ${currentQuestionIndex + 1} / ${totalQuestions}`;
   //document.getElementById("question-number").textContent = `Q${currentQuestionIndex + 1} (${q.type})`;
   document.getElementById("question-text").textContent = `What is a ${q.type.toLowerCase()} of "${q.questionWord}"?`;
 
