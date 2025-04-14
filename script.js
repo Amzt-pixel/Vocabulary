@@ -104,7 +104,7 @@ function startClock() {
   }, 1000);
 }
 
-function generateQuestions(num) {
+/*function generateQuestions(num) {
   const qList = [];
   const used = new Set();
   let attempts = 0;
@@ -148,6 +148,82 @@ function generateQuestions(num) {
   }
 
   // If not enough questions were created, show message and redirect
+  if (qList.length < num) {
+    alert("Failed to generate questions");
+    window.location.href = "index.html";
+    return [];
+  }
+
+  return qList;
+}
+*/
+function generateQuestions(num) {
+  const qList = [];
+  const used = new Set();
+  let attempts = 0;
+  const maxAttempts = num * 10;
+
+  while (qList.length < num && attempts < maxAttempts) {
+    attempts++;
+
+    // 1. Pick a base word randomly
+    const base = csvData[Math.floor(Math.random() * csvData.length)];
+    const baseWord = base.word.toLowerCase();
+    const baseId = base.id;
+
+    if (used.has(baseWord + "_" + baseId)) continue;
+    used.add(baseWord + "_" + baseId);
+
+    // 2. Determine question type
+    const isSyn = (selectedMode === "synonym") || 
+                  (selectedMode === "mixed" && Math.random() < 0.5);
+
+    const correctId = isSyn ? baseId : -baseId;
+
+    // 3. Find all alternative IDs for the same word
+    const altIds = Array.from(new Set(
+      csvData
+        .filter(row => row.word.toLowerCase() === baseWord && row.id !== baseId)
+        .map(row => row.id)
+    ));
+
+    // 4. Determine which IDs to exclude based on question type
+    const exclusionIds = isSyn ? altIds : altIds.map(id => -id);
+
+    // 5. Get all correct answer options with the correctId and exclude alternative meanings
+    let correctOptions = csvData.filter(row =>
+      row.id === correctId &&
+      row.word.toLowerCase() !== baseWord &&
+      !exclusionIds.includes(row.id)
+    );
+
+    if (correctOptions.length === 0) continue;
+
+    // 6. Pick one correct answer randomly
+    const correct = correctOptions[Math.floor(Math.random() * correctOptions.length)];
+
+    // 7. Get wrong options (exclude any same word, same ID, correct ID, and alternative IDs)
+    let wrongOptions = csvData.filter(row =>
+      row.word.toLowerCase() !== baseWord &&
+      row.word.toLowerCase() !== correct.word.toLowerCase() &&
+      row.id !== correctId &&
+      row.id !== -correctId &&
+      !exclusionIds.includes(row.id)
+    );
+
+    wrongOptions = shuffle(wrongOptions).slice(0, 3).map(w => w.word);
+    if (wrongOptions.length < 3) continue;
+
+    const options = shuffle([correct.word, ...wrongOptions]);
+
+    qList.push({
+      questionWord: base.word,
+      correct: correct.word,
+      options: options,
+      type: isSyn ? "Synonym" : "Antonym"
+    });
+  }
+
   if (qList.length < num) {
     alert("Failed to generate questions");
     window.location.href = "index.html";
