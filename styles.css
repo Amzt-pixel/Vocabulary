@@ -132,7 +132,6 @@ input[type="number"]::-webkit-inner-spin-button {
 
 button {
     padding: 15px 25px; /* Reduced padding */
-    width: 25%;
     margin: 12px;
     cursor: pointer;
     border: none;
@@ -141,11 +140,11 @@ button {
     
 }
 
-.start-btn { background-color: #004d99; color: white; }
-.save-btn { background-color: #004d99; color: white; }
-.next-btn { background-color: #004d99; color: white; }
-.submit-btn { background-color: #004d99; color: white; }
-.restart-btn { background-color: #004d99; color: white; }
+.start-btn { background-color: #004d99; color: white; width: 50%; }
+.save-btn { background-color: #004d99; color: white; width: 30%;}
+.next-btn { background-color: #004d99; color: white; width: 30%;}
+.submit-btn { background-color: #004d99; color: white; width: 30%; }
+.restart-btn { background-color: #004d99; color: white; width: 50%;}
 .home-btn { background-color: #333; color: white; }
 
 /*button {
