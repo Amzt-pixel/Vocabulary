@@ -137,6 +137,8 @@ button {
     border: none;
     font-size: 20px; /* Reduced from 22px */
     border-radius: 10px;
+    display: flex;
+    flex-wrap: nowrap;
 }
 
 .start-btn { background-color: #004d99; color: white; }
