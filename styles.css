@@ -42,12 +42,12 @@ body {
 }
 
 .question-textbox {
-    border: 2px solid #004d99;  
-    margin: 15px auto;*/
-    border-radius: 8px;
+    border: 6px solid #004d99;  /*2px*/
+    margin: 15px auto;
+    border-radius: 15px;/*8px*/
     width: 85%; /* Slightly narrower */
     text-align: center;
-    background-color: #ffffff;
+    background-color: #006666;
     display: block;
    /* width: calc(100% - 0px); /* Org : 30px Adjust width to fit within the question box */
    /* max-width: 100%; /* Prevent overflow */
