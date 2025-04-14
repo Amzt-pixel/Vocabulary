@@ -62,11 +62,11 @@ body {
     font-weight: bold;
     margin-bottom: 10px;
 }
-.question-header #questionnumber {
+.question-header #question-number {
     color: black; /* Keep question number black */
 }
 
-.question-header #questionclock {
+.question-header #question-clock {
     color: #e74c3c; /* Change timer color to red */
 }
 .buttons-container {
