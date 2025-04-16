@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Word Study</title>
+  <link rel="stylesheet" href="layout.css">
+</head>
+<body>
+  <div class="main-container">
+    <div class="card" id="startCard">
+      <h2>Start Word Study</h2>
+      <label for="csvSelect">Select Word List:</label>
+      <select id="csvSelect"></select>
+
+      <label for="modeSelect">Choose Mode:</label>
+      <select id="modeSelect">
+        <option value="alphabetic">Alphabetic (A-Z)</option>
+        <option value="reverse">Reverse Alphabetic (Z-A)</option>
+        <option value="random">Random</option>
+      </select>
+      <button id="startBtn">Start</button>
+    </div>
+
+    <div id="searchBar" class="search-bar hidden">
+      <input type="text" id="searchInput" placeholder="Search words...">
+      <div id="searchResults" class="search-results"></div>
+    </div>
+
+    <div class="top-info hidden">
+      <div id="clock">Time: 00:00</div>
+    </div>
+
+    <div class="top-controls hidden">
+      <div id="questionCounter">Words Seen: 0</div>
+      <button id="endSessionBtn">Complete</button>
+    </div>
+
+    <div class="card hidden" id="wordCard">
+      <h3 id="baseWord">Word</h3>
+      <div id="synonyms">Synonyms: </div>
+      <div id="antonyms">Antonyms: </div>
+      <div class="nav-buttons">
+        <button id="prevBtn" disabled>Previous</button>
+        <button id="nextBtn">Next</button>
+      </div>
+    </div>
+
+    <div class="card hidden" id="endCard">
+      <h2>Session Complete</h2>
+      <p id="summary"></p>
+      <button id="restartBtn">Restart</button>
+    </div>
+  </div>
+
+  <script src="javascript.js"></script>
+</body>
+</html>
