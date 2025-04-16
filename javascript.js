@@ -8,14 +8,20 @@ let startTime;
 let timerInterval;
 let wordOrder = [];
 
+const CSV_LIST_URL = "https://raw.githubusercontent.com/amzt-pixel/word/main/csvs/csv-list.json";
+
 async function loadCSVList() {
-  const res = await fetch('https://raw.githubusercontent.com/amzt-pixel/Vocabulary/main/csv-list.json');
-  const csvList = await res.json();
-  const select = document.getElementById('csvSelect');
-  csvList.forEach(csv => {
-    const option = document.createElement('option');
-    option.value = csv;
-    option.textContent = csv;
+  const response = await fetch(CSV_LIST_URL);
+  const data = await response.json();
+  const select = document.getElementById("csvSelect");
+
+  // Clear and add default option
+  select.innerHTML = '<option value="" disabled selected>Select a CSV</option>';
+
+  data.forEach(entry => {
+    const option = document.createElement("option");
+    option.value = entry.url;
+    option.textContent = entry.name;
     select.appendChild(option);
   });
 }
@@ -23,14 +29,17 @@ async function loadCSVList() {
 async function startSession() {
   const selectedCSV = document.getElementById('csvSelect').value;
   mode = document.getElementById('modeSelect').value;
-  const response = await fetch(`https://raw.githubusercontent.com/amzt-pixel/Vocabulary/main/csvs/${selectedCSV}`);
+  const response = await fetch(selectedCSV);
   const text = await response.text();
   parseCSV(text);
   prepareWordOrder();
+
+  // Start session
   startTime = new Date();
   timerInterval = setInterval(updateClock, 1000);
   document.getElementById('startScreen').style.display = 'none';
   document.getElementById('sessionScreen').style.display = 'block';
+  document.getElementById('topBar').style.display = 'flex';
   goNext();
 }
 
@@ -74,11 +83,19 @@ function displayWord(index) {
 
   const card = document.getElementById('wordCard');
   card.innerHTML = `<h2>Word: ${entry.word}</h2>`;
-  card.innerHTML += synonyms.size ? `<p><strong>Synonyms:</strong> ${[...synonyms].join(', ')}</p>` : '';
-  card.innerHTML += antonyms.size ? `<p><strong>Antonyms:</strong> ${[...antonyms].join(', ')}</p>` : '';
 
-  card.querySelectorAll('p strong ~ text, p strong ~ span').forEach(el => {
-    el.addEventListener('click', () => jumpToWord(el.textContent));
+  if (synonyms.size) {
+    const synHTML = [...synonyms].map(w => `<span class="clickable">${w}</span>`).join(', ');
+    card.innerHTML += `<p><strong>Synonyms:</strong> ${synHTML}</p>`;
+  }
+
+  if (antonyms.size) {
+    const antHTML = [...antonyms].map(w => `<span class="clickable">${w}</span>`).join(', ');
+    card.innerHTML += `<p><strong>Antonyms:</strong> ${antHTML}</p>`;
+  }
+
+  card.querySelectorAll('.clickable').forEach(span => {
+    span.onclick = () => jumpToWord(span.textContent.trim());
   });
 
   document.getElementById('seenCount').textContent = `Words Seen: ${seenWords}`;
@@ -137,12 +154,16 @@ function handleSearch(query) {
     if (b.word.toLowerCase() === query.toLowerCase()) return 1;
     return a.word.localeCompare(b.word);
   });
+
   const dropdown = document.getElementById('searchResults');
   dropdown.innerHTML = '';
   results.forEach(r => {
     const li = document.createElement('li');
     li.textContent = r.word;
-    li.onclick = () => jumpToWord(r.word);
+    li.onclick = () => {
+      jumpToWord(r.word);
+      dropdown.innerHTML = '';
+    };
     dropdown.appendChild(li);
   });
 }
