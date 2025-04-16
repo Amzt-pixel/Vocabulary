@@ -205,38 +205,130 @@ function updateClock() {
   document.getElementById("clock").textContent = `Time: ${mins}m ${secs}s`;
 }
 
+// Replace your existing handleSearch function with this:
 function handleSearch(e) {
-  const query = e.target.value.toLowerCase();
+  const query = e.target.value.toLowerCase().trim();
   const resultsDiv = document.getElementById("searchResults");
+  const closeBtn = document.getElementById("closeSearchBtn");
+  
   resultsDiv.innerHTML = "";
-
+  
   if (!query) {
     resultsDiv.classList.add("hidden");
+    closeBtn.style.display = "none";
     return;
   }
 
-  const matches = [...new Set(csvData.map(item => item.word))]
-    .filter(word => word.toLowerCase().includes(query))
-    .sort();
+  // Get all unique words
+  const allWords = [...new Set(csvData.map(item => item.word))];
+  
+  // Find matches
+  const exactMatches = allWords.filter(word => 
+    word.toLowerCase() === query
+  );
+  
+  const otherMatches = allWords.filter(word => 
+    word.toLowerCase().includes(query) && word.toLowerCase() !== query
+  ).sort();
 
-  matches.forEach(word => {
-    const div = document.createElement("div");
-    div.textContent = word;
-    div.onclick = () => {
-      const index = studyList.indexOf(word);
-      if (index !== -1) {
-        currentIndex = index;
-        displayWord();
-        resultsDiv.classList.add("hidden");
-        e.target.value = "";
-      }
-    };
-    resultsDiv.appendChild(div);
-  });
-
+  // Display results
+  if (exactMatches.length > 0 || otherMatches.length > 0) {
+    // Add exact matches section
+    if (exactMatches.length > 0) {
+      const exactTitle = document.createElement("div");
+      exactTitle.className = "search-section-title";
+      exactTitle.textContent = "Exact Match";
+      resultsDiv.appendChild(exactTitle);
+      
+      exactMatches.forEach(word => {
+        const div = createSearchResultItem(word);
+        resultsDiv.appendChild(div);
+      });
+    }
+    
+    // Add other matches section
+    if (otherMatches.length > 0) {
+      const otherTitle = document.createElement("div");
+      otherTitle.className = "search-section-title";
+      otherTitle.textContent = "All Words";
+      resultsDiv.appendChild(otherTitle);
+      
+      otherMatches.forEach(word => {
+        const div = createSearchResultItem(word);
+        resultsDiv.appendChild(div);
+      });
+    }
+    
+    closeBtn.style.display = "block";
+  } else {
+    const noResults = document.createElement("div");
+    noResults.textContent = "No word found";
+    noResults.style.padding = "10px";
+    noResults.style.color = "#666";
+    resultsDiv.appendChild(noResults);
+    closeBtn.style.display = "none";
+  }
+  
   resultsDiv.classList.remove("hidden");
 }
 
+function createSearchResultItem(word) {
+  const div = document.createElement("div");
+  div.textContent = word;
+  div.onclick = () => {
+    document.getElementById("searchResults").classList.add("hidden");
+    document.getElementById("closeSearchBtn").style.display = "none";
+    document.getElementById("searchBar").value = "";
+    showWordPopup(word);
+  };
+  return div;
+}
+
+function showWordPopup(word) {
+  const ids = csvData.filter(item => item.word === word).map(item => item.id);
+  const synonyms = new Set();
+  const antonyms = new Set();
+
+  ids.forEach(id1 => {
+    csvData.forEach(({ word: w2, id: id2 }) => {
+      if (id1 === id2 && w2 !== word) synonyms.add(w2);
+      if (id1 === -id2) antonyms.add(w2);
+    });
+  });
+
+  document.getElementById("popupWordTitle").textContent = word;
+  document.getElementById("popupSynDisplay").textContent = 
+    [...synonyms].join(", ") || "None";
+  document.getElementById("popupAntDisplay").textContent = 
+    [...antonyms].join(", ") || "None";
+  
+  document.getElementById("wordPopup").style.display = "block";
+}
+
+// Add close button functionality
+document.getElementById("closePopupBtn").addEventListener("click", () => {
+  document.getElementById("wordPopup").style.display = "none";
+});
+
+// Add close search results button
+const searchContainer = document.querySelector(".top-bar");
+const searchBar = document.getElementById("searchBar");
+const closeSearchBtn = document.createElement("button");
+closeSearchBtn.id = "closeSearchBtn";
+closeSearchBtn.innerHTML = "×";
+closeSearchBtn.addEventListener("click", () => {
+  document.getElementById("searchResults").classList.add("hidden");
+  closeSearchBtn.style.display = "none";
+});
+searchContainer.insertBefore(closeSearchBtn, searchBar.nextSibling);
+
+// Close popup when clicking outside
+document.addEventListener("click", (e) => {
+  const popup = document.getElementById("wordPopup");
+  if (popup.style.display === "block" && !popup.contains(e.target)) {
+    popup.style.display = "none";
+  }
+});
 function shuffleArray(array) {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
