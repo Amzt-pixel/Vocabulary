@@ -1,173 +1,91 @@
-let wordData = [];
-let currentIndex = -1;
-let seenWords = 0;
-let lastWord = null;
-let previousWord = null;
-let mode = 'alphabetic';
-let startTime;
-let timerInterval;
-let wordOrder = [];
+let csvData = []; let selectedCSVUrl = ""; let selectedMode = "alphabetic"; let studyList = []; let currentIndex = 0; let visitedCount = 0; let startTime = null; let timerInterval;
 
-const CSV_LIST_URL = "https://raw.githubusercontent.com/amzt-pixel/word/main/csvs/csv-list.json";
+window.onload = () => { loadCSVList();
 
-async function loadCSVList() {
-  const response = await fetch(CSV_LIST_URL);
-  const data = await response.json();
-  const select = document.getElementById("csvSelect");
+document.getElementById("csvSelector").addEventListener("change", async (e) => { selectedCSVUrl = e.target.value; if (selectedCSVUrl) await loadCSV(selectedCSVUrl); checkInputs(); });
 
-  // Clear and add default option
-  select.innerHTML = '<option value="" disabled selected>Select a CSV</option>';
+document.getElementById("topicSelector").addEventListener("change", (e) => { selectedMode = e.target.value; checkInputs(); });
 
-  data.forEach(entry => {
-    const option = document.createElement("option");
-    option.value = entry.url;
-    option.textContent = entry.name;
-    select.appendChild(option);
+document.getElementById("wordCountInput").addEventListener("input", checkInputs); document.getElementById("startBtn").addEventListener("click", startSession); document.getElementById("nextBtn").addEventListener("click", nextWord); document.getElementById("prevBtn").addEventListener("click", prevWord); document.getElementById("completeBtn").addEventListener("click", completeSession); document.getElementById("restartBtn").addEventListener("click", () => showScreen("study")); document.getElementById("goHomeBtn").addEventListener("click", () => showScreen("setup")); document.getElementById("searchBar").addEventListener("input", handleSearch); };
+
+function checkInputs() { const mode = document.getElementById("topicSelector").value; const count = parseInt(document.getElementById("wordCountInput").value); const startBtn = document.getElementById("startBtn"); startBtn.disabled = !(mode && count && !isNaN(count)); }
+
+async function loadCSVList() { try { const response = await fetch("https://raw.githubusercontent.com/amzt-pixel/Vocabulary/main/csv-list.json"); const list = await response.json(); const select = document.getElementById("csvSelector");
+
+list.forEach((item) => {
+  const option = document.createElement("option");
+  option.value = item.url;
+  option.textContent = item.name;
+  select.appendChild(option);
+});
+
+if (list.length > 0) {
+  selectedCSVUrl = list[0].url;
+  await loadCSV(selectedCSVUrl);
+}
+
+} catch (e) { alert("Failed to load CSV list."); console.error(e); } }
+
+async function loadCSV(url) { const response = await fetch(url); const text = await response.text(); const rows = text.trim().split("\n").slice(1); csvData = rows.map((row) => { const [word, id] = row.split(","); return { word: word.trim(), id: parseInt(id.trim()) }; }); }
+
+function startSession() { const count = parseInt(document.getElementById("wordCountInput").value); const wordMap = new Map();
+
+csvData.forEach(({ word, id }) => { if (!wordMap.has(word)) wordMap.set(word, []); wordMap.get(word).push(id); });
+
+const validWords = [...wordMap.keys()].filter((word) => { const ids = wordMap.get(word); const synonyms = new Set(); const antonyms = new Set();
+
+ids.forEach((id1) => {
+  csvData.forEach(({ word: w2, id: id2 }) => {
+    if (id1 === id2 && w2 !== word) synonyms.add(w2);
+    if (id1 === -id2) antonyms.add(w2);
   });
-}
+});
 
-async function startSession() {
-  const selectedCSV = document.getElementById('csvSelect').value;
-  mode = document.getElementById('modeSelect').value;
-  const response = await fetch(selectedCSV);
-  const text = await response.text();
-  parseCSV(text);
-  prepareWordOrder();
+return synonyms.size > 0 || antonyms.size > 0;
 
-  // Start session
-  startTime = new Date();
-  timerInterval = setInterval(updateClock, 1000);
-  document.getElementById('startScreen').style.display = 'none';
-  document.getElementById('sessionScreen').style.display = 'block';
-  document.getElementById('topBar').style.display = 'flex';
-  goNext();
-}
+});
 
-function parseCSV(text) {
-  const lines = text.trim().split('\n').slice(1);
-  const map = new Map();
-  lines.forEach(line => {
-    const [word, idStr] = line.split(',');
-    const id = parseInt(idStr);
-    if (!map.has(word)) map.set(word, []);
-    map.get(word).push(id);
-  });
-  wordData = Array.from(map.entries()).map(([word, ids]) => ({ word, ids }));
-}
+let sortedWords; if (selectedMode === "alphabetic") sortedWords = validWords.sort(); else if (selectedMode === "reverse") sortedWords = validWords.sort().reverse(); else sortedWords = shuffleArray(validWords);
 
-function prepareWordOrder() {
-  wordOrder = wordData.map((_, i) => i);
-  if (mode === 'alphabetic') {
-    wordOrder.sort((a, b) => wordData[a].word.localeCompare(wordData[b].word));
-  } else if (mode === 'reverse') {
-    wordOrder.sort((a, b) => wordData[b].word.localeCompare(wordData[a].word));
-  } else if (mode === 'random') {
-    for (let i = wordOrder.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [wordOrder[i], wordOrder[j]] = [wordOrder[j], wordOrder[i]];
-    }
-  }
-}
+studyList = sortedWords.slice(0, count); currentIndex = 0; visitedCount = 0; startTime = new Date(); timerInterval = setInterval(updateClock, 1000);
 
-function displayWord(index) {
-  const entry = wordData[wordOrder[index]];
-  const synonyms = new Set();
-  const antonyms = new Set();
-  entry.ids.forEach(id => {
-    wordData.forEach(other => {
-      if (other.word === entry.word) return;
-      if (other.ids.includes(id)) synonyms.add(other.word);
-      if (other.ids.includes(-id)) antonyms.add(other.word);
-    });
-  });
+showScreen("study"); displayWord(); }
 
-  const card = document.getElementById('wordCard');
-  card.innerHTML = `<h2>Word: ${entry.word}</h2>`;
+function displayWord() { const word = studyList[currentIndex]; const ids = csvData.filter(item => item.word === word).map(item => item.id);
 
-  if (synonyms.size) {
-    const synHTML = [...synonyms].map(w => `<span class="clickable">${w}</span>`).join(', ');
-    card.innerHTML += `<p><strong>Synonyms:</strong> ${synHTML}</p>`;
-  }
+const synonyms = new Set(); const antonyms = new Set();
 
-  if (antonyms.size) {
-    const antHTML = [...antonyms].map(w => `<span class="clickable">${w}</span>`).join(', ');
-    card.innerHTML += `<p><strong>Antonyms:</strong> ${antHTML}</p>`;
-  }
+ids.forEach(id1 => { csvData.forEach(({ word: w2, id: id2 }) => { if (id1 === id2 && w2 !== word) synonyms.add(w2); if (id1 === -id2) antonyms.add(w2); }); });
 
-  card.querySelectorAll('.clickable').forEach(span => {
-    span.onclick = () => jumpToWord(span.textContent.trim());
-  });
+document.getElementById("wordDisplay").textContent = Word: ${word}; document.getElementById("synDisplay").textContent = synonyms.size > 0 ? Synonyms: ${[...synonyms].join(", ")} : ""; document.getElementById("antDisplay").textContent = antonyms.size > 0 ? Antonyms: ${[...antonyms].join(", ")} : "";
 
-  document.getElementById('seenCount').textContent = `Words Seen: ${seenWords}`;
-}
+if (visitedCount <= currentIndex) visitedCount = currentIndex + 1; document.getElementById("questionCount").textContent = Questions Seen: ${visitedCount};
 
-function goNext() {
-  previousWord = lastWord;
-  currentIndex = (currentIndex + 1) % wordOrder.length;
-  lastWord = wordData[wordOrder[currentIndex]].word;
-  seenWords++;
-  displayWord(currentIndex);
-  document.getElementById('prevBtn').disabled = false;
-}
+const nextBtn = document.getElementById("nextBtn"); nextBtn.textContent = currentIndex === studyList.length - 1 ? "Restart" : "Next"; }
 
-function goPrevious() {
-  if (!previousWord) return;
-  const prevIndex = wordData.findIndex(w => w.word === previousWord);
-  if (prevIndex === -1) return;
-  currentIndex = wordOrder.findIndex(i => wordData[i].word === previousWord);
-  [lastWord, previousWord] = [previousWord, null];
-  displayWord(currentIndex);
-  document.getElementById('prevBtn').disabled = true;
-}
+function nextWord() { if (currentIndex === studyList.length - 1) { currentIndex = 0; } else { currentIndex++; } displayWord(); }
 
-function jumpToWord(word) {
-  const index = wordData.findIndex(w => w.word === word);
-  if (index !== -1) {
-    wordOrder.unshift(index);
-    currentIndex = -1;
-    goNext();
-  }
-}
+function prevWord() { if (currentIndex > 0) { currentIndex--; displayWord(); } }
 
-function endSession() {
-  clearInterval(timerInterval);
-  const duration = Math.floor((new Date() - startTime) / 1000);
-  const mins = Math.floor(duration / 60);
-  const secs = duration % 60;
-  document.getElementById('sessionScreen').style.display = 'none';
-  document.getElementById('endScreen').style.display = 'block';
-  document.getElementById('summary').textContent = `You studied ${seenWords} words in ${mins} min ${secs} sec.`;
-}
+function completeSession() { clearInterval(timerInterval); const endTime = new Date(); const seconds = Math.floor((endTime - startTime) / 1000); const minutes = Math.floor(seconds / 60); const remainingSeconds = seconds % 60;
 
-function updateClock() {
-  const now = new Date();
-  const diff = Math.floor((now - startTime) / 1000);
-  const m = Math.floor(diff / 60);
-  const s = diff % 60;
-  document.getElementById('clock').textContent = `Time: ${m}m ${s}s`;
-}
+document.getElementById("sessionStats").textContent = You studied ${visitedCount} word(s) in ${minutes} minute(s) and ${remainingSeconds} second(s).; showScreen("complete"); }
 
-function handleSearch(query) {
-  const results = wordData.filter(w => w.word.toLowerCase().includes(query.toLowerCase()));
-  results.sort((a, b) => {
-    if (a.word.toLowerCase() === query.toLowerCase()) return -1;
-    if (b.word.toLowerCase() === query.toLowerCase()) return 1;
-    return a.word.localeCompare(b.word);
-  });
+function showScreen(screen) { document.getElementById("setupScreen").classList.add("hidden"); document.getElementById("studyScreen").classList.add("hidden"); document.getElementById("completeScreen").classList.add("hidden"); if (screen === "setup") document.getElementById("setupScreen").classList.remove("hidden"); if (screen === "study") document.getElementById("studyScreen").classList.remove("hidden"); if (screen === "complete") document.getElementById("completeScreen").classList.remove("hidden"); }
 
-  const dropdown = document.getElementById('searchResults');
-  dropdown.innerHTML = '';
-  results.forEach(r => {
-    const li = document.createElement('li');
-    li.textContent = r.word;
-    li.onclick = () => {
-      jumpToWord(r.word);
-      dropdown.innerHTML = '';
-    };
-    dropdown.appendChild(li);
-  });
-}
+function updateClock() { const now = new Date(); const seconds = Math.floor((now - startTime) / 1000); const minutes = Math.floor(seconds / 60); const remainingSeconds = seconds % 60; document.getElementById("clock").textContent = Time: ${minutes}m ${remainingSeconds}s; }
 
-window.onload = () => {
-  loadCSVList();
-};
+function handleSearch(e) { const query = e.target.value.toLowerCase(); const resultDiv = document.getElementById("searchResults"); resultDiv.innerHTML = "";
+
+if (!query) return resultDiv.classList.add("hidden");
+
+const matches = csvData.map(entry => entry.word) .filter((v, i, a) => a.indexOf(v) === i) .filter(word => word.toLowerCase().includes(query));
+
+const exact = matches.filter(word => word.toLowerCase() === query); const rest = matches.filter(word => word.toLowerCase() !== query).sort(); const finalList = [...exact, ...rest];
+
+finalList.forEach(word => { const div = document.createElement("div"); div.textContent = word; div.onclick = () => { const index = studyList.indexOf(word); if (index !== -1) { currentIndex = index; displayWord(); resultDiv.classList.add("hidden"); document.getElementById("searchBar").value = ""; } }; resultDiv.appendChild(div); });
+
+resultDiv.classList.remove("hidden"); }
+
+function shuffleArray(array) { const shuffled = [...array]; for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; } return shuffled; }
+
