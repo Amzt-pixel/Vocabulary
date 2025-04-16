@@ -7,6 +7,25 @@
 </head>
 <body>
   <div class="main-container">
+
+    <!-- Search Bar -->
+    <div id="searchBar" class="search-bar hidden">
+      <input type="text" id="searchInput" placeholder="Search words...">
+      <div id="searchResults" class="search-results"></div>
+    </div>
+
+    <!-- Clock and Controls -->
+    <div id="topPanel" class="hidden">
+      <div class="top-info">
+        <div id="clock">Time: 00:00</div>
+      </div>
+      <div class="top-controls">
+        <div id="questionCounter">Words Seen: 0</div>
+        <button id="endSessionBtn">Complete</button>
+      </div>
+    </div>
+
+    <!-- Start Card -->
     <div class="card" id="startCard">
       <h2>Start Word Study</h2>
       <label for="csvSelect">Select Word List:</label>
@@ -21,20 +40,7 @@
       <button id="startBtn">Start</button>
     </div>
 
-    <div id="searchBar" class="search-bar hidden">
-      <input type="text" id="searchInput" placeholder="Search words...">
-      <div id="searchResults" class="search-results"></div>
-    </div>
-
-    <div class="top-info hidden">
-      <div id="clock">Time: 00:00</div>
-    </div>
-
-    <div class="top-controls hidden">
-      <div id="questionCounter">Words Seen: 0</div>
-      <button id="endSessionBtn">Complete</button>
-    </div>
-
+    <!-- Word Card -->
     <div class="card hidden" id="wordCard">
       <h3 id="baseWord">Word</h3>
       <div id="synonyms">Synonyms: </div>
@@ -45,11 +51,13 @@
       </div>
     </div>
 
+    <!-- End Card -->
     <div class="card hidden" id="endCard">
       <h2>Session Complete</h2>
       <p id="summary"></p>
       <button id="restartBtn">Restart</button>
     </div>
+
   </div>
 
   <script src="javascript.js"></script>
