@@ -1,0 +1,86 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: #f4f4f4;
+  display: flex;
+  justify-content: center;
+}
+
+.main-container {
+  width: 100%;
+  max-width: 500px;
+}
+
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+  margin-bottom: 20px;
+}
+
+h2, h3 {
+  margin-top: 0;
+}
+
+button {
+  padding: 8px 16px;
+  margin: 10px 5px 0 0;
+  border: none;
+  background-color: #2e86de;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #a4a4a4;
+  cursor: not-allowed;
+}
+
+.nav-buttons {
+  margin-top: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+#searchBar {
+  margin-bottom: 10px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+}
+
+.search-results {
+  background: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  max-height: 150px;
+  overflow-y: auto;
+  position: absolute;
+  width: calc(100% - 40px);
+  z-index: 10;
+}
+
+.search-results div {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.search-results div:hover {
+  background-color: #f0f0f0;
+}
+
+.top-controls,
+.top-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+}
