@@ -23,7 +23,7 @@ async function loadCSVList() {
 async function startSession() {
   const selectedCSV = document.getElementById('csvSelect').value;
   mode = document.getElementById('modeSelect').value;
-  const response = await fetch(`https://raw.githubusercontent.com/your-username/word/main/csvs/${selectedCSV}`);
+  const response = await fetch(`https://raw.githubusercontent.com/amzt-pixel/word/main/csvs/${selectedCSV}`);
   const text = await response.text();
   parseCSV(text);
   prepareWordOrder();
