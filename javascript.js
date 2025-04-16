@@ -7,8 +7,13 @@ let visitedCount = 0;
 let startTime = null;
 let timerInterval;
 
-window.onload = () => {
-  loadCSVList();
+/*window.onload = () => {
+  loadCSVList();*/
+window.onload = async () => {
+  await loadCSVList(); // make this await
+  checkInputs(); // <-- ADD THIS
+  ...
+};
 
   document.getElementById("csvSelector").addEventListener("change", async (e) => {
     selectedCSVUrl = e.target.value;
@@ -31,11 +36,18 @@ window.onload = () => {
   document.getElementById("searchBar").addEventListener("input", handleSearch);
 };
 
-function checkInputs() {
+/*function checkInputs() {
   const mode = document.getElementById("topicSelector").value;
   const count = parseInt(document.getElementById("wordCountInput").value);
   const startBtn = document.getElementById("startBtn");
   startBtn.disabled = !(mode && count && !isNaN(count));
+}*/
+function checkInputs() {
+  const csv = document.getElementById("csvSelector").value;
+  const mode = document.getElementById("topicSelector").value;
+  const count = parseInt(document.getElementById("wordCountInput").value);
+  const startBtn = document.getElementById("startBtn");
+  startBtn.disabled = !(csv && mode && count && !isNaN(count));
 }
 
 async function loadCSVList() {
