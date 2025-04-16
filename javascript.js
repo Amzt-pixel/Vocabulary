@@ -9,7 +9,7 @@ let timerInterval;
 let wordOrder = [];
 
 async function loadCSVList() {
-  const res = await fetch('https://raw.githubusercontent.com/your-username/word/main/csv-list.json');
+  const res = await fetch('https://raw.githubusercontent.com/amzt-pixel/word/main/csv-list.json');
   const csvList = await res.json();
   const select = document.getElementById('csvSelect');
   csvList.forEach(csv => {
