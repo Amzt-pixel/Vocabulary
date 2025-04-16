@@ -9,7 +9,7 @@ let timerInterval;
 let wordOrder = [];
 
 async function loadCSVList() {
-  const res = await fetch('https://raw.githubusercontent.com/amzt-pixel/word/main/csv-list.json');
+  const res = await fetch('https://raw.githubusercontent.com/amzt-pixel/Vocabulary/main/csv-list.json');
   const csvList = await res.json();
   const select = document.getElementById('csvSelect');
   csvList.forEach(csv => {
@@ -23,7 +23,7 @@ async function loadCSVList() {
 async function startSession() {
   const selectedCSV = document.getElementById('csvSelect').value;
   mode = document.getElementById('modeSelect').value;
-  const response = await fetch(`https://raw.githubusercontent.com/amzt-pixel/word/main/csvs/${selectedCSV}`);
+  const response = await fetch(`https://raw.githubusercontent.com/amzt-pixel/Vocabulary/main/csvs/${selectedCSV}`);
   const text = await response.text();
   parseCSV(text);
   prepareWordOrder();
