@@ -72,6 +72,9 @@ async function loadCSV(url) {
 }
 
 function startSession() {
+
+  console.log("Start button clicked"); // <- Add this to test if it's being called
+  // logic to switch to study screen
   const count = parseInt(document.getElementById("wordCountInput").value);
   const wordMap = new Map();
 
