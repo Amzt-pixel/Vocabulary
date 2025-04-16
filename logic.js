@@ -330,6 +330,7 @@ document.addEventListener("click", (e) => {
   }
 });
 */
+/*
 // Add these new functions
 function showWordPopup(word) {
   const ids = csvData.filter(item => item.word === word).map(item => item.id);
@@ -438,6 +439,94 @@ document.addEventListener("click", (e) => {
   if (popup.style.display === "block" && !popup.contains(e.target)) {
     popup.style.display = "none";
   }
+});
+*/
+// Replace your entire handleSearch function with:
+function handleSearch(e) {
+  const query = e.target.value.trim().toLowerCase();
+  const resultsDiv = document.getElementById("searchResults");
+  const clearBtn = document.getElementById("clearSearchBtn");
+  
+  clearBtn.style.display = query ? "block" : "none";
+  resultsDiv.innerHTML = "";
+  
+  if (!query) {
+    resultsDiv.style.display = "none";
+    return;
+  }
+
+  const allWords = [...new Set(csvData.map(item => item.word))];
+  const exactMatches = allWords.filter(word => word.toLowerCase() === query);
+  const otherMatches = allWords.filter(word => 
+    word.toLowerCase().includes(query) && !exactMatches.includes(word)
+  ).sort();
+
+  if (exactMatches.length > 0 || otherMatches.length > 0) {
+    if (exactMatches.length > 0) {
+      addResultsSection("Exact Matches", exactMatches, resultsDiv);
+    }
+    if (otherMatches.length > 0) {
+      addResultsSection("Other Matches", otherMatches, resultsDiv);
+    }
+  } else {
+    const noResults = document.createElement("div");
+    noResults.className = "list-group-item";
+    noResults.textContent = "No words found";
+    resultsDiv.appendChild(noResults);
+  }
+  
+  resultsDiv.style.display = "block";
+}
+
+function addResultsSection(title, words, container) {
+  const header = document.createElement("div");
+  header.className = "list-group-item list-group-item-secondary fw-bold";
+  header.textContent = title;
+  container.appendChild(header);
+  
+  words.forEach(word => {
+    const item = document.createElement("div");
+    item.className = "list-group-item list-group-item-action";
+    item.textContent = word;
+    item.addEventListener("click", () => {
+      document.getElementById("searchBar").value = "";
+      document.getElementById("searchResults").style.display = "none";
+      document.getElementById("clearSearchBtn").style.display = "none";
+      showWordPopup(word);
+    });
+    container.appendChild(item);
+  });
+}
+
+// Replace your showWordPopup function with:
+function showWordPopup(word) {
+  const ids = csvData.filter(item => item.word === word).map(item => item.id);
+  const synonyms = new Set();
+  const antonyms = new Set();
+
+  ids.forEach(id1 => {
+    csvData.forEach(({ word: w2, id: id2 }) => {
+      if (id1 === id2 && w2 !== word) synonyms.add(w2);
+      if (id1 === -id2) antonyms.add(w2);
+    });
+  });
+
+  document.getElementById("popupWordTitle").textContent = word;
+  document.getElementById("popupSynDisplay").innerHTML = 
+    [...synonyms].join("<br>") || "None";
+  document.getElementById("popupAntDisplay").innerHTML = 
+    [...antonyms].join("<br>") || "None";
+  
+  // Show Bootstrap modal
+  const modal = new bootstrap.Modal(document.getElementById('wordPopup'));
+  modal.show();
+}
+
+// Add this new event listener (put with your other listeners):
+document.getElementById("clearSearchBtn").addEventListener("click", () => {
+  document.getElementById("searchBar").value = "";
+  document.getElementById("searchResults").style.display = "none";
+  document.getElementById("clearSearchBtn").style.display = "none";
 });
 function shuffleArray(array) {
   const shuffled = [...array];
