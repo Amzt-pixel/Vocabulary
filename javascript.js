@@ -73,7 +73,7 @@ async function loadCSVList() {
   }
 }
 
-async function loadCSV(url) {
+/*async function loadCSV(url) {
   const response = await fetch(url);
   const text = await response.text();
   const rows = text.trim().split("\n").slice(1);
@@ -81,9 +81,37 @@ async function loadCSV(url) {
     const [word, id] = row.split(",");
     return { word: word.trim(), id: parseInt(id.trim()) };
   });
+}*/
+async function loadCSV(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Network response was not ok");
+
+    const text = await response.text();
+    const rows = text.trim().split("\n").slice(1);
+
+    csvData = rows.map((row) => {
+      const [word, id] = row.split(",");
+      return { word: word.trim(), id: parseInt(id.trim()) };
+    });
+
+    if (!csvData.length) {
+      throw new Error("CSV file is empty or invalid.");
+    }
+
+  } catch (err) {
+    alert("Failed to load or parse CSV file. Please try another file.");
+    console.error("CSV Load Error:", err);
+    csvData = []; // make sure it doesn't have stale data
+  }
 }
 
 function startSession() {
+
+  if (!csvData.length) {
+  alert("CSV data not loaded yet!");
+  return;
+  }
 
   console.log("Start button clicked"); // <- Add this to test if it's being called
   // logic to switch to study screen
