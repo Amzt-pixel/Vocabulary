@@ -85,7 +85,17 @@
       width: 90%;
       z-index: 10;
     }
+    /* Ensures consistent font sizing in all text containers */
+#wordDisplay, #synDisplay, #antDisplay, .word-card div {
+  font-size: 16px !important; /* Forces uniform size */
+  line-height: 1.5; /* Prevents layout shifts */
+  word-break: break-word; /* Handles long words gracefully */
+}
 
+/* Specific fix for antonyms/synonyms */
+#synDisplay, #antDisplay {
+  white-space: pre-wrap; /* Preserves spaces/linebreaks */
+}
     #searchResults div {
       padding: 10px;
       cursor: pointer;
@@ -94,7 +104,7 @@
     #searchResults div:hover {
       background-color: #eee;
     }
-
+   
     .footer-buttons {
       display: flex;
       justify-content: space-between;
