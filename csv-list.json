@@ -1,11 +1,7 @@
 [
   {
-    "name": "Synonyms & Antonyms Set 1",
-    "url": "https://raw.githubusercontent.com/amzt-pixel/Vocabulary/main/csvs/set1.csv"
-  },
-  {
-    "name": "Synonyms & Antonyms Set 2",
-    "url": "https://raw.githubusercontent.com/amzt-pixel/Vocabulary/main/csvs/set2.csv"
+    "name": "Full Set",
+    "url": "https://raw.githubusercontent.com/amzt-pixel/word/main/csvs/vocabulary.csv"
   },
   {
     "name": "General English Set",
