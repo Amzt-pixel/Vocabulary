@@ -147,4 +147,6 @@ function handleSearch(query) {
   });
 }
 
-window.onload = loadCSVList;
+window.onload = () => {
+  loadCSVList();
+};
