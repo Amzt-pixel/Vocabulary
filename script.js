@@ -211,7 +211,13 @@ function generateQuestions(num) {
       !exclusionIds.includes(row.id)
     );
 
-    wrongOptions = shuffle(wrongOptions).slice(0, 3).map(w => w.word);
+    const seenWords = new Set([correct.word.toLowerCase()]);
+wrongOptions = shuffle(wrongOptions).filter(w => {
+  const wordLower = w.word.toLowerCase();
+  if (seenWords.has(wordLower)) return false;
+  seenWords.add(wordLower);
+  return true;
+}).slice(0, 3).map(w => w.word);
     if (wrongOptions.length < 3) continue;
 
     const options = shuffle([correct.word, ...wrongOptions]);
