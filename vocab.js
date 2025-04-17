@@ -26,7 +26,6 @@ document.getElementById("topicSelector").addEventListener("change", (e) => {
   checkInputs();
 });
 
-document.getElementById("wordCountInput").addEventListener("input", checkInputs);
 document.getElementById("startBtn").addEventListener("click", startSession);
 document.getElementById("nextBtn").addEventListener("click", nextWord);
 document.getElementById("prevBtn").addEventListener("click", prevWord);
