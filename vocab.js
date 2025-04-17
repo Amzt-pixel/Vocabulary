@@ -240,7 +240,7 @@ function displayWord() {
     });
   });
 
-  document.getElementById("wordDisplay").textContent = `Word ${currentIndex + 1}: ${word}`;
+  document.getElementById("wordDisplay").textContent = `Root word : ${word}`;
   document.getElementById("synDisplay").textContent = [...synonyms].join(", ") || "None";
   document.getElementById("antDisplay").textContent = [...antonyms].join(", ") || "None";
 
@@ -258,7 +258,7 @@ function displayWord() {
 function nextWord() {
   if (currentIndex < studyList.length - 1) {
     currentIndex++;
-    visitedCount++;
+    wordsSeen++;
     displayWord();
   } else {
     alert("All words studied!");
