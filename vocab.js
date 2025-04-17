@@ -181,8 +181,42 @@ function prevWord() {
   }
 }
 */
+function filterAndSortWords(mode) {
+  const wordMap = new Map();
+
+  // Group words by IDs
+  csvData.forEach(({ word, id }) => {
+    if (!wordMap.has(word)) wordMap.set(word, []);
+    wordMap.get(word).push(id);
+  });
+
+  // Filter valid words that have at least one synonym or antonym
+  const validWords = [...wordMap.keys()].filter((word) => {
+    const ids = wordMap.get(word);
+    const synonyms = new Set();
+    const antonyms = new Set();
+
+    ids.forEach((id1) => {
+      csvData.forEach(({ word: w2, id: id2 }) => {
+        if (id1 === id2 && w2 !== word) synonyms.add(w2);
+        if (id1 === -id2) antonyms.add(w2);
+      });
+    });
+
+    return synonyms.size > 0 || antonyms.size > 0;
+  });
+
+  // Sort based on selected mode
+  if (mode === "alphabetic") {
+    return validWords.sort();
+  } else if (mode === "reverse") {
+    return validWords.sort().reverse();
+  } else {
+    return shuffleArray(validWords);
+  }
+}
 function startSession() {
-  filterAndSortWords(); // create the studyList based on mode
+  studyList = filterAndSortWords(selectedMode); // create the studyList based on mode
   currentIndex = 0;
   wordsSeen = 1;
   startTime = new Date();
