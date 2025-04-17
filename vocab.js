@@ -38,10 +38,9 @@ document.getElementById("goHomeBtn").addEventListener("click", () => showScreen(
 function checkInputs() {
   const csv = document.getElementById("csvSelector").value;
   const mode = document.getElementById("topicSelector").value;
-  const count = parseInt(document.getElementById("wordCountInput").value);
   const startBtn = document.getElementById("startBtn");
-  
-  startBtn.disabled = !(csv && mode && count > 0 && !isNaN(count));
+
+  startBtn.disabled = !(csv && mode);
 }
 
 // Load CSV list from GitHub
