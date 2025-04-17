@@ -253,7 +253,7 @@ function displayWord() {
 
   // Reset Next button if changed earlier
   document.getElementById("nextBtn").textContent = "Next";
-  document.getElementById("nextBtn").onclick = nextWord;
+ // document.getElementById("nextBtn").onclick = nextWord;
 }
 function nextWord() {
   if (currentIndex < studyList.length - 1) {
