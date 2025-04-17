@@ -240,7 +240,7 @@ function displayWord() {
     });
   });
 
-  document.getElementById("wordDisplay").textContent = `Root word : ${word}`;
+  document.getElementById("wordDisplay").textContent = `${word}`;
   document.getElementById("synDisplay").textContent = [...synonyms].join(", ") || "None";
   document.getElementById("antDisplay").textContent = [...antonyms].join(", ") || "None";
 
