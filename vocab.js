@@ -1,6 +1,6 @@
 let csvData = [];
 let selectedCSVUrl = "";
-let selectedMode = “A-Z”;
+let selectedMode = "alphabetic";
 let studyList = [];
 let currentIndex = 0;
 let wordsSeen = 0;
@@ -38,12 +38,12 @@ function checkInputs() {
   const csv = document.getElementById("csvSelector").value;
   const mode = document.getElementById("topicSelector").value;
   const startBtn = document.getElementById("startBtn");
-
+  
   startBtn.disabled = !(csv && mode);
 }
 
 // Load CSV list from GitHub
-/*async function loadCSVList() {
+async function loadCSVList() {
   try {
     const response = await fetch("https://raw.githubusercontent.com/amzt-pixel/Vocabulary/main/csv-list.json");
     if (!response.ok) throw new Error("Failed to fetch CSV list");
@@ -68,51 +68,7 @@ function checkInputs() {
     alert("Error loading CSV list. Check console for details.");
   }
 }
-*/
-async function loadCSVList() {
-  try {
-    const url = "https://raw.githubusercontent.com/amzt-pixel/Vocabulary/main/csv-list.json";
-    console.log("Fetching CSV list from:", url); // Log the URL being fetched
-    
-    const response = await fetch(url);
-    if (!response.ok) {
-      console.error("HTTP Error:", response.status, response.statusText);
-      throw new Error(`HTTP error: ${response.status}`);
-    }
 
-    const text = await response.text();
-    console.log("Raw response:", text); // Log raw response
-    
-    const list = JSON.parse(text); // Explicit parsing (in case of malformed JSON)
-    console.log("Parsed list:", list); // Log parsed data
-
-    if (!Array.isArray(list)) {
-      throw new Error("CSV list is not an array");
-    }
-
-    const select = document.getElementById("csvSelector");
-    select.innerHTML = '<option value="">Select a CSV</option>'; // Reset with default
-
-    list.forEach((item) => {
-      if (!item.name || !item.url) {
-        console.warn("Skipping invalid item:", item);
-        return;
-      }
-      select.add(new Option(item.name, item.url));
-    });
-
-    if (list.length > 0) {
-      selectedCSVUrl = list[0].url;
-      select.value = selectedCSVUrl;
-      await loadCSV(selectedCSVUrl);
-    } else {
-      console.warn("CSV list is empty");
-    }
-  } catch (err) {
-    console.error("loadCSVList failed:", err);
-    alert(`Error loading CSV list: ${err.message}`);
-  }
-}
 // Load and parse CSV data
 async function loadCSV(url) {
   try {
@@ -135,7 +91,7 @@ async function loadCSV(url) {
     alert("Error loading CSV. Please try another file.");
   }
 }
-/*
+
 // Start study session
 function startSession() {
   if (!csvData.length) {
