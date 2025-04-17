@@ -92,7 +92,7 @@ async function loadCSV(url) {
     alert("Error loading CSV. Please try another file.");
   }
 }
-
+/*
 // Start study session
 function startSession() {
   if (!csvData.length) {
@@ -172,6 +172,103 @@ function nextWord() {
   currentIndex = (currentIndex === studyList.length - 1) ? 0 : currentIndex + 1;
   visitedCount = Math.max(visitedCount, currentIndex + 1);
   displayWord();
+}
+
+function prevWord() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    displayWord();
+  }
+}
+*/
+function startSession() {
+  if (!csvData.length) {
+    alert("No CSV data loaded!");
+    return;
+  }
+
+  const wordMap = new Map();
+
+  csvData.forEach(({ word, id }) => {
+    if (!wordMap.has(word)) wordMap.set(word, []);
+    wordMap.get(word).push(id);
+  });
+
+  // Filter words with synonyms/antonyms
+  const validWords = [...wordMap.keys()].filter((word) => {
+    const ids = wordMap.get(word);
+    const synonyms = new Set();
+    const antonyms = new Set();
+
+    ids.forEach((id1) => {
+      csvData.forEach(({ word: w2, id: id2 }) => {
+        if (id1 === id2 && w2 !== word) synonyms.add(w2);
+        if (id1 === -id2) antonyms.add(w2);
+      });
+    });
+
+    return synonyms.size > 0 || antonyms.size > 0;
+  });
+
+  // Order based on mode
+  if (selectedMode === "alphabetic") {
+    studyList = validWords.sort();
+  } else if (selectedMode === "reverse") {
+    studyList = validWords.sort().reverse();
+  } else {
+    studyList = shuffleArray(validWords);
+  }
+
+  currentIndex = 0;
+  visitedCount = 1;
+  startTime = new Date();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(updateClock, 1000);
+
+  showScreen("study");
+  displayWord();
+}
+
+function displayWord() {
+  const word = studyList[currentIndex];
+  const ids = csvData.filter(item => item.word === word).map(item => item.id);
+
+  const synonyms = new Set();
+  const antonyms = new Set();
+
+  ids.forEach(id1 => {
+    csvData.forEach(({ word: w2, id: id2 }) => {
+      if (id1 === id2 && w2 !== word) synonyms.add(w2);
+      if (id1 === -id2) antonyms.add(w2);
+    });
+  });
+
+  document.getElementById("wordDisplay").textContent = `Word ${currentIndex + 1}: ${word}`;
+  document.getElementById("synDisplay").textContent = [...synonyms].join(", ") || "None";
+  document.getElementById("antDisplay").textContent = [...antonyms].join(", ") || "None";
+  document.getElementById("questionCount").textContent = `Total Words: ${studyList.length}`;
+  document.getElementById("modeDisplay").textContent = `Mode: ${selectedMode}`;
+
+  // Button state
+  document.getElementById("prevBtn").disabled = currentIndex === 0;
+  const nextBtn = document.getElementById("nextBtn");
+  if (currentIndex === studyList.length - 1) {
+    nextBtn.textContent = "Restart";
+  } else {
+    nextBtn.textContent = "Next";
+  }
+}
+
+function nextWord() {
+  if (currentIndex < studyList.length - 1) {
+    currentIndex++;
+    visitedCount = Math.max(visitedCount, currentIndex + 1);
+    displayWord();
+  } else {
+    alert("All words studied!");
+    document.getElementById("nextBtn").textContent = "Restart";
+    document.getElementById("nextBtn").onclick = startSession;
+  }
 }
 
 function prevWord() {
