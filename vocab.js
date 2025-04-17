@@ -256,16 +256,20 @@ function displayWord() {
   document.getElementById("nextBtn").onclick = nextWord;
 }
 function nextWord() {
-  if (currentIndex === studyList.length - 1) {
+  if (currentIndex < studyList.length - 1) {
+    currentIndex++;
+    visitedCount++;
+    displayWord();
+  } else {
     alert("All words studied!");
     document.getElementById("nextBtn").textContent = "Restart";
-    document.getElementById("nextBtn").onclick = () => startSession();
-    return;
+    document.getElementById("nextBtn").onclick = () => {
+      currentIndex = 0;
+      displayWord();
+      document.getElementById("nextBtn").textContent = "Next";
+      document.getElementById("nextBtn").onclick = nextWord;
+    };
   }
-
-  currentIndex++;
-  wordsSeen++;
-  displayWord();
 }
 function prevWord() {
   if (currentIndex === 0) return;
