@@ -3,6 +3,7 @@ let selectedCSVUrl = "";
 let selectedMode = "alphabetic";
 let studyList = [];
 let currentIndex = 0;
+let wordsSeen = 0;
 let visitedCount = 0;
 let startTime = null;
 let timerInterval;
@@ -182,46 +183,11 @@ function prevWord() {
 }
 */
 function startSession() {
-  if (!csvData.length) {
-    alert("No CSV data loaded!");
-    return;
-  }
-
-  const wordMap = new Map();
-
-  csvData.forEach(({ word, id }) => {
-    if (!wordMap.has(word)) wordMap.set(word, []);
-    wordMap.get(word).push(id);
-  });
-
-  // Filter words with synonyms/antonyms
-  const validWords = [...wordMap.keys()].filter((word) => {
-    const ids = wordMap.get(word);
-    const synonyms = new Set();
-    const antonyms = new Set();
-
-    ids.forEach((id1) => {
-      csvData.forEach(({ word: w2, id: id2 }) => {
-        if (id1 === id2 && w2 !== word) synonyms.add(w2);
-        if (id1 === -id2) antonyms.add(w2);
-      });
-    });
-
-    return synonyms.size > 0 || antonyms.size > 0;
-  });
-
-  // Order based on mode
-  if (selectedMode === "alphabetic") {
-    studyList = validWords.sort();
-  } else if (selectedMode === "reverse") {
-    studyList = validWords.sort().reverse();
-  } else {
-    studyList = shuffleArray(validWords);
-  }
-
+  filterAndSortWords(); // Get filtered list based on mode
   currentIndex = 0;
-  visitedCount = 1;
+  wordsSeen = 1; // Start counting from first word shown
   startTime = new Date();
+
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(updateClock, 1000);
 
@@ -246,36 +212,36 @@ function displayWord() {
   document.getElementById("wordDisplay").textContent = `Word ${currentIndex + 1}: ${word}`;
   document.getElementById("synDisplay").textContent = [...synonyms].join(", ") || "None";
   document.getElementById("antDisplay").textContent = [...antonyms].join(", ") || "None";
-  document.getElementById("questionCount").textContent = `Total Words: ${studyList.length}`;
+  document.getElementById("questionCount").textContent = `Words Seen: ${wordsSeen}`;
+  document.getElementById("wordTotal").textContent = `Total Words: ${studyList.length}`;
   document.getElementById("modeDisplay").textContent = `Mode: ${selectedMode}`;
 
-  // Button state
+  // Enable/Disable Previous button
   document.getElementById("prevBtn").disabled = currentIndex === 0;
-  const nextBtn = document.getElementById("nextBtn");
-  if (currentIndex === studyList.length - 1) {
-    nextBtn.textContent = "Restart";
-  } else {
-    nextBtn.textContent = "Next";
-  }
-}
 
-function nextWord() {
-  if (currentIndex < studyList.length - 1) {
-    currentIndex++;
-    visitedCount = Math.max(visitedCount, currentIndex + 1);
-    displayWord();
-  } else {
-    alert("All words studied!");
-    document.getElementById("nextBtn").textContent = "Restart";
-    document.getElementById("nextBtn").onclick = startSession;
-  }
+  // Reset Next button text if needed
+  document.getElementById("nextBtn").textContent = "Next";
+  document.getElementById("nextBtn").onclick = nextWord;
 }
 
 function prevWord() {
-  if (currentIndex > 0) {
-    currentIndex--;
-    displayWord();
+  if (currentIndex === 0) return; // Prevent going before first word
+
+  currentIndex--;
+  wordsSeen++;
+  displayWord();
+}
+function nextWord() {
+  if (currentIndex === studyList.length - 1) {
+    alert("All words studied!");
+    document.getElementById("nextBtn").textContent = "Restart";
+    document.getElementById("nextBtn").onclick = () => startSession();
+    return;
   }
+
+  currentIndex++;
+  wordsSeen++;
+  displayWord();
 }
 
 function completeSession() {
@@ -285,7 +251,7 @@ function completeSession() {
   const secs = elapsed % 60;
   
   document.getElementById("sessionStats").textContent = 
-    `You studied ${visitedCount} words in ${mins}m ${secs}s.`;
+    `You studied ${wordsSeen} words in ${mins}m ${secs}s.`;
   showScreen("complete");
 }
 
