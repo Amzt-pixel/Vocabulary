@@ -183,9 +183,9 @@ function prevWord() {
 }
 */
 function startSession() {
-  filterAndSortWords(); // Get filtered list based on mode
+  filterAndSortWords(); // create the studyList based on mode
   currentIndex = 0;
-  wordsSeen = 1; // Start counting from first word shown
+  wordsSeen = 1;
   startTime = new Date();
 
   if (timerInterval) clearInterval(timerInterval);
@@ -194,7 +194,6 @@ function startSession() {
   showScreen("study");
   displayWord();
 }
-
 function displayWord() {
   const word = studyList[currentIndex];
   const ids = csvData.filter(item => item.word === word).map(item => item.id);
@@ -212,24 +211,17 @@ function displayWord() {
   document.getElementById("wordDisplay").textContent = `Word ${currentIndex + 1}: ${word}`;
   document.getElementById("synDisplay").textContent = [...synonyms].join(", ") || "None";
   document.getElementById("antDisplay").textContent = [...antonyms].join(", ") || "None";
-  document.getElementById("questionCount").textContent = `Words Seen: ${wordsSeen}`;
+
+  document.getElementById("wordOrder").textContent = `Word ${currentIndex + 1}`;
   document.getElementById("wordTotal").textContent = `Total Words: ${studyList.length}`;
   document.getElementById("modeDisplay").textContent = `Mode: ${selectedMode}`;
+  document.getElementById("questionCount").textContent = `Words Seen: ${wordsSeen}`;
 
-  // Enable/Disable Previous button
   document.getElementById("prevBtn").disabled = currentIndex === 0;
 
-  // Reset Next button text if needed
+  // Reset Next button if changed earlier
   document.getElementById("nextBtn").textContent = "Next";
   document.getElementById("nextBtn").onclick = nextWord;
-}
-
-function prevWord() {
-  if (currentIndex === 0) return; // Prevent going before first word
-
-  currentIndex--;
-  wordsSeen++;
-  displayWord();
 }
 function nextWord() {
   if (currentIndex === studyList.length - 1) {
@@ -240,6 +232,13 @@ function nextWord() {
   }
 
   currentIndex++;
+  wordsSeen++;
+  displayWord();
+}
+function prevWord() {
+  if (currentIndex === 0) return;
+
+  currentIndex--;
   wordsSeen++;
   displayWord();
 }
