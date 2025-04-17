@@ -1,6 +1,6 @@
 let csvData = [];
 let selectedCSVUrl = "";
-let selectedMode = "alphabetic";
+let selectedMode = "A-Z";
 let studyList = [];
 let currentIndex = 0;
 let wordsSeen = 0;
@@ -126,8 +126,8 @@ function startSession() {
 
   // Sort based on selected mode
   let sortedWords;
-  if (selectedMode === "alphabetic") sortedWords = validWords.sort();
-  else if (selectedMode === "reverse") sortedWords = validWords.sort().reverse();
+  if (selectedMode === "A-Z") sortedWords = validWords.sort();
+  else if (selectedMode === ""Z-A"") sortedWords = validWords.sort().reverse();
   else sortedWords = shuffleArray(validWords);
 
   studyList = sortedWords.slice(0, count);
@@ -206,9 +206,9 @@ function filterAndSortWords(mode) {
   });
 
   // Sort based on selected mode
-  if (mode === "alphabetic") {
+  if (mode === "A-Z") {
     return validWords.sort();
-  } else if (mode === "reverse") {
+  } else if (mode === ""Z-A"") {
     return validWords.sort().reverse();
   } else {
     return shuffleArray(validWords);
