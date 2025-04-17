@@ -39,8 +39,8 @@ body {
       font-size: 16px;
       border: none;
       border-radius: 4px;
-      /*background-color: steelblue;*/
-      background-color: #ff9900;
+      background-color: steelblue;
+      /*background-color: #ff9900;*/
       color: white;
       cursor: pointer;
     }
