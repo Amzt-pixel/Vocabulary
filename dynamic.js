@@ -1,11 +1,13 @@
-// Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDSVQV-Ewuv_XVgjOvI8Vz0CO7zH4RzIoo",
+  authDomain: "vocabulary-webdata.firebaseapp.com",
+  databaseURL: "https://vocabulary-webdata-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "vocabulary-webdata",
+  storageBucket: "vocabulary-webdata.firebasestorage.app",
+  messagingSenderId: "35145778827",
+  appId: "1:35145778827:web:1d410961e0e145fb5ab68e",
+  measurementId: "G-9YZKKF20PJ"
 };
 
 // Initialize Firebase
