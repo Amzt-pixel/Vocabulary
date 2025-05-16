@@ -49,6 +49,23 @@ body {
       background-color: #ccc;
       cursor: not-allowed;
     }
+    
+        #savedWordsContainer {
+            display: none;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .saved-word {
+            cursor: pointer;
+            padding: 5px;
+            margin: 3px;
+            background-color: #f0f0f0;
+        }
+        .saved-word:hover {
+            background-color: #e0e0e0;
+        }
+
 
     .top-bar {
       display: flex;
