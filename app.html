@@ -58,6 +58,19 @@
       <button id="prevBtn">Previous</button>
       <button id="nextBtn">Next</button>
     </div>
+    <div id="wordManager">
+        <button id="loginBtn">Login</button>
+        <button id="viewWordsBtn">View Saved Words</button>
+        <button id="saveBtn">Save Current Word</button>
+        <button id="deleteBtn">Delete Current Word</button>
+        <button id="clearBtn">Clear All</button>
+        
+        <div id="savedWordsContainer">
+            <button id="closeBtn">Close</button>
+            <div id="savedWordsList"></div>
+        </div>
+    </div>
+
   </div>
 
   <div id="completeScreen" class="screen">
@@ -81,6 +94,12 @@
 </div>
 <!-- Just before closing body tag -->
 <script src="dictionary.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Dynamic functionality -->
+    <script src="dynamic.js"></script>
 
 </body>
 </html>
