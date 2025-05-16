@@ -132,7 +132,7 @@ function handleWordClick(word) {
     if (index !== -1) {
         currentIndex = index;
         // Call your existing display function
-        displayWord(word);
+        displayWord(currentIndex);
     }
 }
 
