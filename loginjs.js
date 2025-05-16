@@ -83,7 +83,7 @@ document.getElementById('savedWordsList').addEventListener('click', (e) => {
 // CSV Loading Functions
 async function loadCSVList() {
   try {
-    const response = await fetch("https://raw.githubusercontent.com/amzt-pixel/Vocabulary/main/csv-list.json");
+    const response = await fetch("https://raw.githubusercontent.com/amzt-pixel/word/main/csv-list.json");
     if (!response.ok) throw new Error("Failed to fetch CSV list");
     
     const list = await response.json();
