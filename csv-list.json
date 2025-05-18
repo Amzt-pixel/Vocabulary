@@ -2,5 +2,9 @@
   {
     "name": "Dictionary",
     "url": "https://raw.githubusercontent.com/amzt-pixel/word/main/csvs/dictionary-v11-5-Sun-10:08.csv"
+  },
+  {
+    "name": "Dictionary update",
+    "url": "https://raw.githubusercontent.com/amzt-pixel/word/main/csvs/dictionary-v18-5-Sun-00_05.csv"
   }
 ]
